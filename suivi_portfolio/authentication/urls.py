@@ -15,9 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.decorators.csrf import csrf_exempt
+
+from .views import RegistrationView, UsernameValidationView, EmailValidationView
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path('', include('transactions.urls'),),
-    path('authentication/', include('authentication.urls'))
+    path('register', RegistrationView.as_view(), name='register'),
+    path('validate-username', csrf_exempt(UsernameValidationView.as_view()),
+         name='validate-username'),
+    path('validate-email', csrf_exempt(EmailValidationView.as_view()),
+         name='validate-email'),
+    
+    
 ]
