@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.decorators.csrf import csrf_exempt
 
-from .views import RegistrationView, LoginView ,LogoutView,UsernameValidationView, EmailValidationView
+from .views import RegistrationView, LoginView ,LogoutView,UsernameValidationView, EmailValidationView, RequestPasswordResetEmail
 
 urlpatterns = [
     path('register', RegistrationView.as_view(), name='register'),
@@ -27,4 +27,7 @@ urlpatterns = [
          name='validate-username'),
     path('validate-email', csrf_exempt(EmailValidationView.as_view()),
          name='validate-email'),
+    path('request-reset-link', RequestPasswordResetEmail.as_view(),
+         name='request-password'),
+    
 ]

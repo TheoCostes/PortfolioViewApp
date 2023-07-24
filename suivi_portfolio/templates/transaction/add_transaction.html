@@ -1,5 +1,75 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
 
-{% block content %}
-<h1> Add Expense </h1>
-{% endblock content %}
+<div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'transactions'%}">Transactions</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Add Transaction</li>
+    </ol>
+  </nav>
+
+  <div class="card">
+    <div class="card-body">
+      <form action="{% url 'add-transaction' %}" method="post">
+        {% include 'partials/_messages.html'%} {% csrf_token %}
+        <div class="form-group">
+            <label for="">Amount</label>
+            <input
+              type="number"
+              class="form-control form-control-sm"
+              name="amount"
+              value="{{values.amount}}"
+            />
+          </div>
+        <div class="form-group">
+            <label for="">Symbole</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              name="symbole"
+              value="{{values.symbole}}"
+            />
+          </div>
+        <div class="form-group">
+          <label for="">Description</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            name="description"
+            value="{{values.description}}"
+          />
+        </div>
+        <div class="form-group">
+          <label for="">Type actif</label>
+          <select class="form-control" name="type_actif">
+            {% for actif in type_actifs%}
+            <option name="type_actifs" value="{{actif.name}}"
+              >{{actif.name}}</option
+            >
+
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="">Date of Transaction</label>
+          <input
+            type="date"
+            class="form-control form-control-sm"
+            name="transaction_date"
+          />
+        </div>
+
+        <input
+          type="submit"
+          value="Submit"
+          class="btn btn-primary btn-primary-sm"
+        />
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
