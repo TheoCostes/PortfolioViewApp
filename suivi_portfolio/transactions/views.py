@@ -41,6 +41,13 @@ def index(request):
         'page_obj': page_obj,
         'currency': currency
     }
+    
+    if request.method == 'POST':
+        print("HEEERE")
+        records = Transaction_history.objects.all()
+        records.delete()
+        return render(request, 'transaction/index.html', context)
+    
     return render(request, 'transaction/index.html', context)
 
 

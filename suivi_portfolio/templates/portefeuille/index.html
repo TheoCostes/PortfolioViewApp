@@ -7,7 +7,7 @@
 <div class="container mt-4">
     {% include 'partials/_messages.html' %} 
   <div class="row">
-    <div class="col-md-10">
+    <div class="col-md-8">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
@@ -18,6 +18,11 @@
           </li>
         </ol>
       </nav>
+    </div>
+    <div class="col-md-4">
+      <!-- Exemple de modèle d'un bouton qui déclenchera la fenêtre pop-up -->
+        <button class ="btn btn-block btn-primary" id="confirmationButton">Netoyer portefeuille</button>
+
     </div>
 
   </div>
@@ -116,9 +121,30 @@
 
 <script src="{% static 'js/searchTransactions.js' %}"></script>
 
-
-
-
+<script>
+  document.getElementById("confirmationButton").addEventListener("click", function() {
+      if (confirm("Êtes-vous sûr de vouloir effectuer cette action ?")) {
+          // Si l'utilisateur clique sur "OK" dans la fenêtre pop-up, effectuez l'action ici
+          // Par exemple, vous pouvez envoyer une requête AJAX pour supprimer l'élément ou effectuer toute autre action.
+          // Remplacez l'URL et la méthode par celles correspondant à votre vue Django.
+          fetch('', {
+              method: 'POST',
+              // Ajoutez les en-têtes CSRF si nécessaire pour la protection contre les attaques CSRF.
+              headers: {
+                  'X-CSRFToken': '{{ csrf_token }}'
+              }
+          })
+          .then(response => {
+              // Traitez la réponse si nécessaire
+          })
+          .catch(error => {
+              // Traitez l'erreur si nécessaire
+          });
+          window.location.reload();
+      } else {
+          // Si l'utilisateur clique sur "Annuler", ne faites rien
+      }
+  });
 </script>
 
 
