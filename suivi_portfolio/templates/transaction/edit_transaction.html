@@ -29,44 +29,77 @@
       <form action="{% url 'edit-transaction' transaction.id %}" method="post">
         {% include 'partials/_messages.html'%} {% csrf_token %}
         <div class="form-group">
+          <label for="">Token1</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            name="token1"
+            value="{{values.token1}}"
+          />
+        </div>
+        <div class="form-group">
+          <label for="">Type actif 1</label>
+          <select class="form-control" name="type_actif1">
+            {% for actif in type_actifs%}
+            <option name="type_actif1" value="{{actif.name}}"
+              >{{actif.name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="">Description 1</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            name="description1"
+            value="{{values.description1}}"
+          />
+        <div class="form-group">
           <label for="">Amount</label>
           <input
             type="number"
             step="0.0001"
             class="form-control form-control-sm"
-            name="amount"
-            value="{{values.amount}}"
+            name="amount1"
+            value="{{values.amount1}}"
           />
         </div>
         <div class="form-group">
-            <label for="">Symbole</label>
-            <input
-              type="text"
-              class="form-control form-control-sm"
-              name="symbole"
-              value="{{values.symbole}}"
-            />
-          </div>
-        <div class="form-group">
-          <label for="">Description</label>
+          <label for="">Token2</label>
           <input
             type="text"
             class="form-control form-control-sm"
-            name="description"
-            value="{{values.description}}"
+            name="token2"
+            value="{{values.token2}}"
           />
         </div>
         <div class="form-group">
-            <label for="">Type actif</label>
-            <select class="form-control" name="type_actif">
-              {% for actif in type_actifs%}
-              <option name="type_actifs" value="{{actif.name}}"
-                >{{actif.name}}</option
-              >
-  
-              {% endfor %}
-            </select>
-          </div>
+          <label for="">Type actif 2</label>
+          <select class="form-control" name="type_actif2">
+            {% for actif in type_actifs%}
+            <option name="type_actif2" value="{{actif.name}}"
+              >{{actif.name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="">Description 2</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            name="description2"
+            value="{{values.description2}}"
+          />
+        <div class="form-group">
+          <label for="">Amount</label>
+          <input
+            type="number"
+            step="0.0001"
+            class="form-control form-control-sm"
+            name="amount2"
+            value="{{values.amount2}}"
+          />
+        </div>
         <div class="form-group">
           <label for="">Date of Transaction</label>
           <input

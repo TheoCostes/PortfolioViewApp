@@ -1,0 +1,40 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'transactions'%}">Transactions</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Choose the type of the transaction</li>
+    </ol>
+  </nav>
+
+  <div class="card">
+    <div class="card-body">
+      <form action="{% url 'choose-type-transaction' %}" method="post">
+        {% include 'partials/_messages.html'%} {% csrf_token %}
+
+        <div class="form-group">
+          <label for="">Type de transaction</label>
+          <select class="form-control" name="type_transac">
+            <option disabled selected value> -- select an option -- </option>
+            {% for transac in type_transacs%}
+            <option name="type_transacs" value="{{transac.name}}"
+              >{{transac.name}}</option
+            >
+
+            {% endfor %}
+          </select>
+        </div>
+        <input
+          type="submit"
+          value="Select"
+          class="btn btn-primary btn-primary-sm"
+        />
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

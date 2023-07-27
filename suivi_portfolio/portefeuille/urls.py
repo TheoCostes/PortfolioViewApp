@@ -20,11 +20,5 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 urlpatterns = [
-    path("", views.index, name='transactions'),
-    path("choose-type-transaction", views.choose_type_transaction,name="choose-type-transaction"),
-    path("add-transaction/<str:type_transac>", views.add_transaction, name='add-transaction'),
-    path("edit-transaction/<int:id>'", views.transaction_edit, name='edit-transaction'),
-    path("delete-transaction/<int:id>'", views.transaction_delete, name='delete-transaction'),
-    path('search-expenses', csrf_exempt(views.search_expenses),
-         name="search_expenses"),
+    path("", views.index, name='portefeuille'),
 ]

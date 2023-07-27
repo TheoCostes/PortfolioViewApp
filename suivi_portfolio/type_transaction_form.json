@@ -1,0 +1,130 @@
+{
+"Rendements": {"token1":{"type":"text",
+                         "name":"token1",
+                         "label": "Token 1",
+                         "value": "{{values.symbole}}"
+                        },
+                "amount1":{"type":"number",
+                            "name":"amount1",
+                            "label": "Quantity Token 1",
+                            "value": "{{values.amount1}}"
+                        },
+                "type_actif1":{"type":"select",
+                                "name":"type_actif_token1",
+                                "label": "Type actif Token 1",
+                                "value": "{{values.symbole}}"
+                            },
+                "descriptif1":{"type":"text",
+                                "name":"descriptif1",
+                                "label": "Description Token 1",
+                                "value": "{{values.description1}}"
+                            },
+                "date":{"type":"date",
+                        "name":"transaction_date",
+                        "label": "Date of Transaction",
+                        "value": "{{values.date}}"
+                    }
+            },
+"Swap": {
+    "token1":{"type":"text",
+                         "name":"token1",
+                         "label": "Token 1",
+                         "value": "{{values.symbole}}"
+                        },
+    "amount1":{"type":"number",
+                "name":"amount1",
+                "label": "Quantity Token 1",
+                "value": "{{values.amount1}}"
+            },
+    "type_actif1":{"type":"select",
+                    "name":"type_actif_token1",
+                    "label": "Type actif Token 1",
+                    "value": "{{values.symbole}}"
+                },
+    "descriptif1":{"type":"text",
+                    "name":"descriptif1",
+                    "label": "Description Token 1",
+                    "value": "{{values.description1}}"
+                },
+    "token2":{"type":"text",
+                "name":"token2",
+                "label": "Token 2",
+                "value": "{{values.symbole}}"
+                },
+    "amount2":{"type":"number",
+                "name":"amount2",
+                "label": "Quantity Token 2",
+                "value": "{{values.amount2}}"
+            },
+    "type_actif2":{"type":"select",
+                    "name":"type_actif_token2",
+                    "label": "Type actif Token 2",
+                    "value": "{{values.symbole}}"
+                },
+    "descriptif2":{"type":"text",
+                    "name":"descriptif2",
+                    "label": "Description Token 2",
+                    "value": "{{values.description2}}"
+                },
+    "date":{"type":"date",
+            "name":"transaction_date",
+            "label": "Date of Transaction",
+            "value": "{{values.date}}"
+        }
+
+},
+"Retraits": {
+    "token1":{"type":"text",
+                "name":"token1",
+                "label": "Token 1",
+                "value": "{{values.symbole}}"
+            },
+    "amount1":{"type":"number",
+                "name":"amount1",
+                "label": "Quantity Token 1",
+                "value": "{{values.amount1}}"
+            },
+    "type_actif1":{"type":"select",
+                    "name":"type_actif_token1",
+                    "label": "Type actif Token 1",
+                    "value": "{{values.symbole}}"
+                },
+    "descriptif1":{"type":"text",
+                    "name":"descriptif1",
+                    "label": "Description Token 1",
+                    "value": "{{values.description1}}"
+                },
+    "date":{"type":"date",
+            "name":"transaction_date",
+            "label": "Date of Transaction",
+            "value": "{{values.date}}"
+        }
+},
+"Apports": {
+    "token1":{"type":"text",
+                "name":"token1",
+                "label": "Token 1",
+                "value": "{{values.symbole}}"
+            },
+    "amount1":{"type":"number",
+                "name":"amount1",
+                "label": "Quantity Token 1",
+                "value": "{{values.amount1}}"
+            },
+    "type_actif1":{"type":"select",
+                    "name":"type_actif_token1",
+                    "label": "Type actif Token 1",
+                    "value": "{{values.symbole}}"
+                },
+    "descriptif1":{"type":"text",
+                    "name":"descriptif1",
+                    "label": "Description Token 1",
+                    "value": "{{values.description1}}"
+                },
+    "date":{"type":"date",
+            "name":"transaction_date",
+            "label": "Date of Transaction",
+            "value": "{{values.date}}"
+        }
+}
+}
