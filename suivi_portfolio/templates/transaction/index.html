@@ -72,7 +72,7 @@
         <td>{{transaction.type_actif1}}</td>
         <td>{{transaction.description1}}</td>
         <td>{{transaction.amount1}}</td>
-        <td>"XXXXXXX"</td>
+        <td>{{transaction.value1}}</td>
         {% if transaction.type_transaction == "Swap" %}
             <td>{{transaction.token2}}</td>
             <td>{{transaction.type_actif2}}</td>
@@ -83,7 +83,7 @@
             <td> -- </td>
             <td> -- </td>
             <td> -- </td>
-            <td>"XXXXXXX"</td>
+            <td> -- </td>
         {% endif %}
         <td>
           <a

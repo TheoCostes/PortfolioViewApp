@@ -27,7 +27,7 @@ def index(request):
 
         currency = request.POST['currency']
         if exists:
-            user_preferences.currency = currency
+            user_preferences.currency = currency[:3]
             user_preferences.save()
         else:
             UserPreference.objects.create(user=request.user, currency=currency)

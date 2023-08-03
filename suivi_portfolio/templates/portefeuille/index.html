@@ -48,7 +48,7 @@
             <th>Actif</th>
             <th>Description</th>
             <th>Amount</th>
-            <th>Unit price</th>
+            <th>Unit price ({{currency}})</th>
             <th>Value ({{currency}})</th>
             <th></th>
           </tr>
@@ -61,8 +61,8 @@
             <td>{{token_.type_actif}}</td>
             <td>{{token_.description}}</td>
             <td>{{token_.amount}}</td>
-            <td>-----</td>
-            <td>-----</td>
+            <td>{{token_.unit_price}}</td>
+            <td>{{token_.value}}</td>
           </tr>
 
           {% endfor %}
@@ -81,7 +81,7 @@
                 <th>Actif</th>
                 <th>Description</th>
                 <th>Amount</th>
-                <th>Unit price</th>
+                <th>Unit price({{currency}})</th>
                 <th>Value ({{currency}})</th>
                 <th></th>
               </tr>

@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 class Transaction_history(models.Model):
     type_transaction = models.CharField(max_length=100, default="Swap")
     amount1=models.FloatField()
+    unit_price1 = models.FloatField()
+    value1 = models.FloatField()
     type_actif1 = models.CharField(max_length=100)
     token1 = models.CharField(max_length=20)
     description1 = models.CharField(max_length=150)
