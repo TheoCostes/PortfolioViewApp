@@ -28,6 +28,7 @@
                   {% with field_name=element.name %}
                     <input
                       type="{{element.type}}"
+                      step='0.0000001'
                       class="form-control form-control-sm"
                       name="{{element.name}}"
                       value="{{values.field_name}}"

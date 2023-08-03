@@ -107,22 +107,22 @@ def add_transaction(request, type_transac):
         type_actif1 = request.POST['type_actif_token1']
         descriptif1 = request.POST['descriptif1']
         date = request.POST['transaction_date']
+        unit_price1 = request.POST['unit_price1']
+        value1 = request.POST['value1']
         if type_transac == "Swap":
             token2 = request.POST['token2']
             type_actif2 = request.POST['type_actif_token2']
             descriptif2 = request.POST['descriptif2']
             amount2 = request.POST['amount2']
-            update_portefeuille(request.POST, type_transac)
         else:
             token2 = None
             type_actif2 = None
             descriptif2 = None
             amount2 = 0.0
-            update_portefeuille(request.POST, type_transac)
 
         if date == "":
             date = now()
-
+        
         if not descriptif1:
             messages.error(request, 'description is required')
             return render(request, 'transaction/add_transaction.html', context)
@@ -130,7 +130,9 @@ def add_transaction(request, type_transac):
         Transaction_history.objects.create(owner=request.user, amount1=amount1, amount2=amount2, date=date,
                                            type_actif1=type_actif1, description1=descriptif1,
                                            token1=token1, type_actif2=type_actif2, description2=descriptif2,
-                                           token2=token2, type_transaction=type_transac)
+                                           token2=token2, type_transaction=type_transac, unit_price1=unit_price1,
+                                           value1=value1)
+        update_portefeuille(request.POST, type_transac)
         if not Token.objects.filter(symbole=token1).exists():
             Token.objects.create(name=descriptif1, symbole=token1)
         if (not Token.objects.filter(symbole=token2).exists()) and token2:
