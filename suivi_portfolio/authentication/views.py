@@ -4,7 +4,7 @@ from django.views import View
 from django.http import JsonResponse
 import json
 from django.contrib.auth.models import User
-from validate_email import validate_email
+# from validate_email import validate_email
 from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
