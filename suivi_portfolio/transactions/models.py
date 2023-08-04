@@ -13,6 +13,8 @@ class Transaction_history(models.Model):
     token1 = models.CharField(max_length=20)
     description1 = models.CharField(max_length=150)
     amount2=models.FloatField(default=0.0, null=True,blank=True)
+    unit_price2 = models.FloatField()
+    value2 = models.FloatField()
     type_actif2 = models.CharField(max_length=100, null=True,blank=True)
     token2 = models.CharField(max_length=20, null=True,blank=True)
     description2 = models.CharField(max_length=150, null=True,blank=True)

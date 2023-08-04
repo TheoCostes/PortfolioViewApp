@@ -46,6 +46,16 @@
                 "label": "Quantity Token 1",
                 "value": "{{values.amount1}}"
             },
+    "unit_price1":{"type":"number",
+                    "name":"unit_price1",
+                    "label": "Unit price 1",
+                    "value": "{{values.amount1}}"
+        },
+    "value1":{"type":"number",
+        "name":"value1",
+        "label": "Value 1",
+        "value": "{{values.amount1}}"
+    },
     "type_actif1":{"type":"select",
                     "name":"type_actif_token1",
                     "label": "Type actif Token 1",
@@ -66,6 +76,16 @@
                 "label": "Quantity Token 2",
                 "value": "{{values.amount2}}"
             },
+    "unit_price2":{"type":"number",
+                    "name":"unit_price1",
+                    "label": "Unit price 1",
+                    "value": "{{values.amount1}}"
+        },
+    "value2":{"type":"number",
+        "name":"value1",
+        "label": "Value 1",
+        "value": "{{values.amount1}}"
+    },
     "type_actif2":{"type":"select",
                     "name":"type_actif_token2",
                     "label": "Type actif Token 2",

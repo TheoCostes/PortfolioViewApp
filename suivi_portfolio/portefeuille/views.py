@@ -9,8 +9,11 @@ from .utils_api import get_crypto_prices
 # Create your views here.
 
 def index(request):
+    print('HEERE')
     get_crypto_prices(Portefeuille)
+    print("heere")
     portefeuille = Portefeuille.objects.all()
+    
     paginator = Paginator(portefeuille, 50)
     page_number = request.GET.get('page')
     page_obj = Paginator.get_page(paginator, page_number)
