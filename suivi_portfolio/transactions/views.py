@@ -32,7 +32,7 @@ def search_expenses(request):
 def index(request):
     # type_actifs = Type_actif.objects.all()
     transactions = Transaction_history.objects.filter(owner=request.user)
-    paginator = Paginator(transactions, 5)
+    paginator = Paginator(transactions, 15)
     page_number = request.GET.get('page')
     page_obj = Paginator.get_page(paginator, page_number)
     currency = UserPreference.objects.get(user=request.user).currency
@@ -41,13 +41,13 @@ def index(request):
         'page_obj': page_obj,
         'currency': currency
     }
-    
+
     if request.method == 'POST':
         print("HEEERE")
         records = Transaction_history.objects.all()
         records.delete()
         return render(request, 'transaction/index.html', context)
-    
+
     return render(request, 'transaction/index.html', context)
 
 
@@ -66,7 +66,6 @@ def choose_type_transaction(request):
         messages.success(request, 'Transaction saved successfully')
 
         return redirect(reverse('add-transaction', kwargs={'type_transac': type_transac}))
-
 
 
 @login_required(login_url='/authentication/login')
@@ -114,15 +113,19 @@ def add_transaction(request, type_transac):
             type_actif2 = request.POST['type_actif_token2']
             descriptif2 = request.POST['descriptif2']
             amount2 = request.POST['amount2']
+            unit_price2 = request.POST['unit_price2']
+            value2 = request.POST['value2']
         else:
             token2 = None
             type_actif2 = None
             descriptif2 = None
             amount2 = 0.0
+            unit_price2 = 0.0
+            value2 = 0.0
 
         if date == "":
             date = now()
-        
+
         if not descriptif1:
             messages.error(request, 'description is required')
             return render(request, 'transaction/add_transaction.html', context)
@@ -131,7 +134,7 @@ def add_transaction(request, type_transac):
                                            type_actif1=type_actif1, description1=descriptif1,
                                            token1=token1, type_actif2=type_actif2, description2=descriptif2,
                                            token2=token2, type_transaction=type_transac, unit_price1=unit_price1,
-                                           value1=value1)
+                                           value1=value1, unit_price2=unit_price2, value2=value2)
         update_portefeuille(request.POST, type_transac)
         if not Token.objects.filter(symbole=token1).exists():
             Token.objects.create(name=descriptif1, symbole=token1)
@@ -146,24 +149,38 @@ def update_portefeuille(request_post, type_transaction):
     if not Portefeuille.objects.filter(token=request_post['token1']):
         Portefeuille.objects.create(token=request_post['token1'],
                                     amount=request_post['amount1'],
+                                    unit_price=float(
+                                        request_post['unit_price1']),
+                                    value=float(request_post['value1']),
                                     type_actif=request_post['type_actif_token1'],
-                                    description=request_post['descriptif1'])
-    else :
+                                    description=request_post['descriptif1'],
+                                    last_update=now()
+                                    )
+    else:
         token_1 = Portefeuille.objects.get(token=request_post['token1'])
         print("here", token_1.amount, request_post['amount1'])
         token_1.amount += float(request_post['amount1'])
+        token_1.unit_price = float(request_post['unit_price1'])
+        token_1.last_update = now()
         token_1.save()
 
     if type_transaction == "Swap":
-        if not Portefeuille.objects.filter(token=request_post['token2'])  :
+        if not Portefeuille.objects.filter(token=request_post['token2']):
             Portefeuille.objects.create(token=request_post['token2'],
                                         amount=request_post['amount2'],
+                                        unit_price=float(
+                                            request_post['unit_price2']),
+                                        value=float(request_post['value2']),
                                         type_actif=request_post['type_actif_token2'],
-                                        description=request_post['descriptif2'])
-        else :
+                                        description=request_post['descriptif2'],
+                                        last_update=now())
+        else:
             token_2 = Portefeuille.objects.get(token=request_post['token2'])
             token_2.amount += float(request_post['amount2'])
+            token_2.unit_price = float(request_post['unit_price1'])
+            token_2.last_update = now()
             token_2.save()
+
 
 @login_required(login_url='/authentication/login')
 def transaction_edit(request, id):
@@ -193,7 +210,6 @@ def transaction_edit(request, id):
         date = request.POST['transaction_date']
         amount2 = request.POST['amount2']
 
-
         if not descriptif1:
             messages.error(request, 'description is required')
             return render(request, 'transaction/edit_transaction.html', context)
@@ -214,8 +230,8 @@ def transaction_edit(request, id):
         request_post['amount1'] = float(amount1) - float(old_amount1)
 
         if request.POST['token2']:
-            request_post['amount2'] =  float(amount2) - float(old_amount2)
-        print("type_transaction",transaction.type_transaction)
+            request_post['amount2'] = float(amount2) - float(old_amount2)
+        print("type_transaction", transaction.type_transaction)
         update_portefeuille(request_post, transaction.type_transaction)
         messages.success(request, 'transaction updated  successfully')
 
@@ -231,11 +247,11 @@ def transaction_delete(request, id):
     type_trans = transaction.type_transaction
     transaction.delete()
     request_post = {
-        'token1' : token_1,
-        'token2' : token_2,
-        'amount1' : -old_amount1,
-        'amount2' : -old_amount2,
+        'token1': token_1,
+        'token2': token_2,
+        'amount1': -old_amount1,
+        'amount2': -old_amount2,
     }
-    update_portefeuille(request_post,type_trans)
+    update_portefeuille(request_post, type_trans)
     messages.success(request, 'Transaction removed')
     return redirect('transactions')
