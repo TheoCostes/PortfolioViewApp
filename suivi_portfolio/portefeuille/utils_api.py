@@ -16,8 +16,8 @@ def get_prices(model):
     data = {**data_bourse, **data_crypto}
     for symb, prices in data.items():
         tok = model.objects.get(token=symb)
-        tok.unit_price = round(prices, 2)
-        tok.value = round(prices*float(tok.amount), 2)
+        tok.unit_price = round(prices, 5)
+        tok.value = round(prices*float(tok.amount), 5)
         tok.last_update = timezone.now()
         tok.save()
 
