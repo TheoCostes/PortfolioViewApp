@@ -113,8 +113,8 @@ def add_transaction(request, type_transac):
             type_actif2 = request.POST['type_actif_token2']
             descriptif2 = request.POST['descriptif2']
             amount2 = request.POST['amount2']
-            unit_price2 = request.POST['unit_price1']
-            value2 = request.POST['value1']
+            unit_price2 = request.POST['unit_price2']
+            value2 = request.POST['value2']
         else:
             token2 = None
             type_actif2 = None
@@ -153,13 +153,15 @@ def update_portefeuille(request_post, type_transaction):
                                         request_post['unit_price1']),
                                     value=float(request_post['value1']),
                                     type_actif=request_post['type_actif_token1'],
-                                    description=request_post['descriptif1']
+                                    description=request_post['descriptif1'],
+                                    last_update=now()
                                     )
     else:
         token_1 = Portefeuille.objects.get(token=request_post['token1'])
         print("here", token_1.amount, request_post['amount1'])
         token_1.amount += float(request_post['amount1'])
         token_1.unit_price = float(request_post['unit_price1'])
+        token_1.last_update = now()
         token_1.save()
 
     if type_transaction == "Swap":
@@ -170,11 +172,13 @@ def update_portefeuille(request_post, type_transaction):
                                             request_post['unit_price2']),
                                         value=float(request_post['value2']),
                                         type_actif=request_post['type_actif_token2'],
-                                        description=request_post['descriptif2'])
+                                        description=request_post['descriptif2'],
+                                        last_update=now())
         else:
             token_2 = Portefeuille.objects.get(token=request_post['token2'])
             token_2.amount += float(request_post['amount2'])
             token_2.unit_price = float(request_post['unit_price1'])
+            token_2.last_update = now()
             token_2.save()
 
 

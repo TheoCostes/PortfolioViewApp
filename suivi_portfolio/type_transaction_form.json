@@ -77,13 +77,13 @@
                 "value": "{{values.amount2}}"
             },
     "unit_price2":{"type":"number",
-                    "name":"unit_price1",
-                    "label": "Unit price 1",
+                    "name":"unit_price2",
+                    "label": "Unit price 2",
                     "value": "{{values.amount1}}"
         },
     "value2":{"type":"number",
-        "name":"value1",
-        "label": "Value 1",
+        "name":"value2",
+        "label": "Value 2",
         "value": "{{values.amount1}}"
     },
     "type_actif2":{"type":"select",

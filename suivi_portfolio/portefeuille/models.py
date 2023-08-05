@@ -10,10 +10,11 @@ class Portefeuille(models.Model):
     description = models.CharField(max_length=150)
     value = models.FloatField(null=True)
     unit_price = models.FloatField(null=True)
+    last_update = models.DateField()
     # owner = models.ForeignKey(to=User, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return self.token
 
     class Meta:
-        ordering: ['token']
+        ordering: ['type_actif', 'token', '-value']
