@@ -1,0 +1,80 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container mt-3">
+  {% include 'partials/_messages.html' %}
+
+  <div class="row">
+    <div class="col-md-3">
+      <!-- Utilisez la classe "card" pour styliser chaque liste comme une carte -->
+      <div class="card mb-4">
+        <div class="card-header text-center">
+          <h2>TOTAL</h2>
+        </div>
+        <div class="card-body text-center">
+          <h3>{{total|floatformat:2}}{{currency}}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 offset-md-1">
+      <div class="card mb-4">
+        <div class="card-header text-center">
+          <h2>Perf. MTD</h2>
+        </div>
+        <div class="card-body text-center">
+          <h3>{{value_mtd|floatformat:1}} %</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 offset-md-1">
+      <div class="card mb-4">
+        <div class="card-header text-center">
+          <h2>Perf. YTD</h2>
+        </div>
+        <div class="card-body text-center">
+          <h3>{{value_ytd|floatformat:1}} %</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 m-4 offset-md-3">
+      <canvas id="Chart_evol" width="350" height="350"></canvas>
+    </div>
+    <div class="col-md-4 m-4 offset-md-3">
+      <canvas id="Chart_proportion" width="350" height="350"></canvas>
+    </div>
+  </div>
+
+  <script src="{% static 'js/chart_visu.js' %}"></script>
+
+  <script>
+    document
+      .getElementById("confirmationButton")
+      .addEventListener("click", function () {
+        if (confirm("Êtes-vous sûr de vouloir effectuer cette action ?")) {
+          // Si l'utilisateur clique sur "OK" dans la fenêtre pop-up, effectuez l'action ici
+          // Par exemple, vous pouvez envoyer une requête AJAX pour supprimer l'élément ou effectuer toute autre action.
+          // Remplacez l'URL et la méthode par celles correspondant à votre vue Django.
+          fetch("", {
+            method: "POST",
+            // Ajoutez les en-têtes CSRF si nécessaire pour la protection contre les attaques CSRF.
+            headers: {
+              "X-CSRFToken": "{{ csrf_token }}",
+            },
+          })
+            .then((response) => {
+              // Traitez la réponse si nécessaire
+            })
+            .catch((error) => {
+              // Traitez l'erreur si nécessaire
+            });
+          window.location.reload();
+        } else {
+          // Si l'utilisateur clique sur "Annuler", ne faites rien
+        }
+      });
+  </script>
+
+  {% endblock content %}
+</div>
