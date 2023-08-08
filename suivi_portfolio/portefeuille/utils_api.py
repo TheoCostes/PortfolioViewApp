@@ -7,14 +7,13 @@ from suivi_portfolio.settings import API_COINMARKET, API_VANTAGE
 
 
 def get_prices(model):
-    objet_modele = model.objects.get(id=1)
-
     # Vérifier si la dernière mise à jour a eu lieu aujourd'hui
         # Extraire les prix des API
     data_bourse = get_quote_bourse(model)
     data_crypto = get_crypto(model)
     data = {**data_bourse, **data_crypto}
     for symb, prices in data.items():
+        print(symb)
         tok = model.objects.get(token=symb)
         tok.unit_price = round(prices, 5)
         tok.value = round(prices*float(tok.amount), 5)
@@ -73,12 +72,10 @@ def get_quote_bourse(model):
     list_ += [model.objects.filter(token='EUR').values('token')[0]['token']+'USD']
     last_update_list += list(model.objects.filter(token='EUR').values_list(
         'last_update', flat=True).distinct())
-    print(list_)
-    print(len(list_), len(last_update_list))
+
     api_key = API_VANTAGE
     QUOTE = dict()
     for i, symb in enumerate(list_):
-        print(last_update_list[i], timezone.now())
         if last_update_list[i] != timezone.now():
             api_endpoint = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symb}&apikey={api_key}"
             response = get(api_endpoint)
