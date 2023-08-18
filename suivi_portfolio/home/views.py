@@ -5,8 +5,10 @@ from .models import Historique
 from django.db.models import Sum
 from django.utils.timezone import now
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
+@login_required(login_url='/authentication/login')
 def index(request):
     populate_models_historique(Portefeuille)
     total = Portefeuille.objects.aggregate(Sum('value'))
