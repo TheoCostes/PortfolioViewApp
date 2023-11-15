@@ -5,4 +5,4 @@ suivi_portfolio/suivi_portfolio/.env
 suivi_portfolio/portefeuille/__pycache__/
 suivi_portfolio/authentication/__pycache__/
 
-*.sqlite3
+suivi_portfolio/*.sqlite3
