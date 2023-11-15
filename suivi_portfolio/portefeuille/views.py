@@ -6,8 +6,10 @@ from userpreferences.models import UserPreference
 from django.utils.timezone import now
 from django.core.paginator import Paginator
 from .utils_api import get_prices
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
+@login_required(login_url='/authentication/login')
 def index(request):
     get_prices(Portefeuille)
     portefeuille = Portefeuille.objects.all()
