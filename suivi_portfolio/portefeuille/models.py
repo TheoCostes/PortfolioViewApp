@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+
 class Portefeuille(models.Model):
     token = models.CharField(max_length=20)
     amount=models.FloatField(null=True)

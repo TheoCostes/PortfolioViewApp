@@ -1,5 +1,8 @@
+import sys
+sys.path.insert(0, "..")
+
 from django.shortcuts import render
-from .models import Portefeuille
+from portefeuille.models import Portefeuille
 from transactions.models import Token
 from django.contrib import messages
 from userpreferences.models import UserPreference
