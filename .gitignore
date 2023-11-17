@@ -1,1 +1,8 @@
 suivi_portfolio/suivi_portfolio/.env
+./.vscode/
+./.idea/
+./venv/
+suivi_portfolio/portefeuille/__pycache__/
+suivi_portfolio/authentication/__pycache__/
+
+suivi_portfolio/*.sqlite3
