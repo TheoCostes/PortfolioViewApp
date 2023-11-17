@@ -13,7 +13,6 @@ def get_prices(model):
     data_crypto = get_crypto(model)
     data = {**data_bourse, **data_crypto}
     for symb, prices in data.items():
-        print(symb)
         tok = model.objects.get(token=symb)
         tok.unit_price = round(prices, 5)
         tok.value = round(prices*float(tok.amount), 5)
