@@ -8,7 +8,7 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
-st.set_page_config(page_title="test", layout="wide")
+st.set_page_config(page_title="Transactions", layout="wide")
 
 if "delete_transaction" not in st.session_state:
     st.session_state["delete_transaction"] = dict()
@@ -77,7 +77,7 @@ def delete_rows(session_state):
     cursor = conn.cursor()
     for id, state in st.session_state.items():
         if id.split('_')[0] == "delete" and state:
-            cursor.execute(f"DELETE FROM transaction_history WHERE id = ?",
+            cursor.execute(f"DELETE FROM transactions_transaction_history WHERE id = ?",
                            (id.split('_')[1],))
     conn.commit()
     conn.close()
@@ -86,7 +86,7 @@ def delete_rows(session_state):
 def add_database_record(record_dict):
     conn = sqlite3.connect("./data/db.sqlite3")
     cursor = conn.cursor()
-    insert_query = f"INSERT INTO transaction_history ({', '.join(record_dict.keys())})\
+    insert_query = f"INSERT INTO transactions_transaction_history ({', '.join(record_dict.keys())})\
                     VALUES ({', '.join(['?' for _ in record_dict.values()])})"
     cursor.execute(insert_query, tuple(record_dict.values()))
     conn.commit()
@@ -196,8 +196,8 @@ def ajouter_transaction():
 # Exemple de DataFrame
 conn = sqlite3.connect("./data/db.sqlite3")
 cursor = conn.cursor()
-data = cursor.execute("SELECT * FROM transaction_history")
-df = pd.DataFrame(data, columns=[x[0] for x in cursor.description]).query("token1 == 'TEST1'")
+data = cursor.execute("SELECT * FROM transactions_transaction_history")
+df = pd.DataFrame(data, columns=[x[0] for x in cursor.description])
 conn.close()
 
 # Afficher la table avec pagination et colonne de sélection
