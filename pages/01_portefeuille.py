@@ -1,10 +1,14 @@
+import sys
+sys.path.insert(0, "..")
+
 import streamlit as st
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 import streamlit_echarts
-from streamlit_extras.switch_page_button import switch_page
 import sqlite3
+from datetime import datetime
+import logging
+
+from  utils_api import get_prices
 
 st.set_page_config(page_title="portefeuille", layout="wide")
 
@@ -20,9 +24,23 @@ conn = sqlite3.connect("./data/db.sqlite3")
 cursor = conn.cursor()
 data = cursor.execute("SELECT * FROM portefeuille_portefeuille")
 df = pd.DataFrame(data, columns=[x[0] for x in cursor.description])
-conn.close()
+df = df[df['last_update'] == max(df['last_update'])]
+
 
 type_actifs = df["type_actif"].unique().tolist()
+logging.debug(df['last_update'].min())
+logging.debug(datetime.now())
+if df['last_update'].min() != datetime.today():
+    df = get_prices(df)
+    logging.debug(df['last_update'].min())
+    logging.debug(df)
+    logging.debug(len(df))
+    df['id'] = df['id'].apply(lambda x : x + len(df) + 1)
+    logging.debug(df)
+    df.to_sql("portefeuille_portefeuille", con=conn, index=False, if_exists='append')
+    conn.close()
+else:
+    conn.close()
 
 
 # Fonction pour calculer le total par classe d'actif
