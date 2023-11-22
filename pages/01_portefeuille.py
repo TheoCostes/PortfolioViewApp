@@ -11,6 +11,8 @@ import logging
 from  utils_api import get_prices
 
 st.set_page_config(page_title="portefeuille", layout="wide")
+logging.basicConfig(level=logging.DEBUG)
+
 
 st.title("Portefeuille")
 
@@ -26,20 +28,23 @@ data = cursor.execute("SELECT * FROM portefeuille_portefeuille")
 df = pd.DataFrame(data, columns=[x[0] for x in cursor.description])
 df = df[df['last_update'] == max(df['last_update'])]
 
-
+logging.debug('='*100)
 type_actifs = df["type_actif"].unique().tolist()
+logging.debug('COUCOUUUUUU')
 logging.debug(df['last_update'].min())
-logging.debug(datetime.now())
-if df['last_update'].min() != datetime.today():
-    df = get_prices(df)
-    logging.debug(df['last_update'].min())
-    logging.debug(df)
-    logging.debug(len(df))
-    df['id'] = df['id'].apply(lambda x : x + len(df) + 1)
-    logging.debug(df)
-    df.to_sql("portefeuille_portefeuille", con=conn, index=False, if_exists='append')
-    conn.close()
+logging.debug(datetime.now().day)
+if datetime.strptime(df['last_update'].min(), "%Y-%m-%d, %H:%M:%S").date() < datetime.now().date():
+    with st.spinner('Récupération des prix ...'):
+        df = get_prices(df)
+        logging.debug(df['last_update'].min())
+        logging.debug(df)
+        logging.debug(len(df))
+        df['id'] = df['id'].apply(lambda x : x + len(df) + 1)
+        logging.debug(df)
+        df.to_sql("portefeuille_portefeuille", con=conn, index=False, if_exists='append')
+        conn.close()
 else:
+    logging.debug("NOT IN RESEARCH PRICE !!!!)")
     conn.close()
 
 
