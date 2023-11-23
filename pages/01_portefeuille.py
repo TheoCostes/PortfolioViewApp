@@ -7,6 +7,9 @@ import streamlit_echarts
 import sqlite3
 from datetime import datetime
 import logging
+from streamlit_extras.chart_container import chart_container
+from streamlit_extras.metric_cards import style_metric_cards
+
 
 from  utils_api import get_prices
 
@@ -16,24 +19,21 @@ logging.basicConfig(level=logging.DEBUG)
 
 st.title("Portefeuille")
 
-# expander1 = st.expander(f"Portefeuille CASH",)
-# expander2 = st.expander(f"Portefeuille Crypto IMMO")
-# expander3 = st.expander(f"Portefeuille Crypto")
-# expander4 = st.expander(f"Portefeuille PEA")
-
 
 conn = sqlite3.connect("./data/db.sqlite3")
 cursor = conn.cursor()
 data = cursor.execute("SELECT * FROM portefeuille_portefeuille")
-df = pd.DataFrame(data, columns=[x[0] for x in cursor.description])
-df = df[df['last_update'] == max(df['last_update'])]
+df_total = pd.DataFrame(data, columns=[x[0] for x in cursor.description])
+df = df_total[df_total['last_update'] == max(df_total['last_update'])]
+df_agg = df_total.groupby(['last_update', 'type_actif']).sum('value').reset_index()
+
+df_agg['last_update'] = pd.to_datetime(df_agg['last_update'], format='mixed')
+df_agg = df_agg.groupby([pd.Grouper(key='last_update', freq='D'), 'type_actif'])['value'].mean().reset_index()
 
 logging.debug('='*100)
 type_actifs = df["type_actif"].unique().tolist()
-logging.debug('COUCOUUUUUU')
-logging.debug(df['last_update'].min())
-logging.debug(datetime.now().day)
-if datetime.strptime(df['last_update'].min(), "%Y-%m-%d, %H:%M:%S").date() < datetime.now().date():
+
+if datetime.strptime(df['last_update'].min(), "%Y-%m-%d").date() < datetime.now().date():
     with st.spinner('Récupération des prix ...'):
         df = get_prices(df)
         logging.debug(df['last_update'].min())
@@ -67,12 +67,50 @@ option = {
             "radius": ["40%", "70%"],
             "avoidLabelOverlap": False,
             "label": {"show": False, "position": "center"},
-            "emphasis": {"label": {"show": True, "fontSize": 40, "fontWeight": "bold"}},
+            "emphasis": {"label": {"show": True, "fontSize": 30, "fontWeight": "bold"}},
             "labelLine": {"show": False},
             "data": [0],
         }
     ],
 }
+
+def plot_portfolio_evolution(df, x, y , color):
+    with chart_container(df):
+        st.write("Portfolio evolution par type d'actif")
+        st.line_chart(data=df, x=x, y=y,
+                      color=color, use_container_width=True)
+
+
+liste_colonne = ["token", "description", "unit_price", "amount", "value"]
+
+col1, col2 = st.columns(2)
+df_actif = df.groupby('type_actif',).sum('value').reset_index()
+logging.debug("df_actif")
+logging.debug(df_actif[['type_actif', 'value']])
+df_visu = df_actif[["value", "type_actif"]]
+
+with col1:
+    option['series'][0]['data'] = [dict(value=row['value'], name=row['type_actif']) for index, row in df_visu.iterrows()]
+    streamlit_echarts.st_echarts(option, height="400px")
+
+with col2:
+    plot_portfolio_evolution(df_agg, 'last_update', 'value', 'type_actif')
+
+latest_date = df_agg['last_update'].max()
+filtered_df = df_agg[df_agg['last_update'] == latest_date]
+logging.debug('debuuuuug')
+logging.debug(filtered_df)
+
+# Pour chaque catégorie, créer une "card" Streamlit avec la valeur correspondante
+col = st.columns(len(type_actifs)+1)
+col[0].metric(label='Asset value', value=filtered_df['value'].sum().round(2))
+for i, actif in enumerate(type_actifs):
+    category_data = filtered_df[filtered_df['type_actif'] == actif]
+    value = category_data['value'].round(2).iloc[0]
+
+    # Créer une "card" Streamlit
+    col[i+1].metric(f"{actif}", value=value)
+style_metric_cards()
 
 # Affichage des expanders
 for classe in type_actifs:
@@ -81,11 +119,11 @@ for classe in type_actifs:
     # Calcul du total
     total = classe_df["value"].sum().round(2)
 
-    liste_colonne = ["token", "description", "unit_price", "amount", "value"]
-
-    expander =  st.expander(f"{classe} - Total: {total} €")
+    expander = st.expander(f"{classe}")
     col1, col2 = expander.columns(2)
+
     with col1:
+        st.empty()
         st.dataframe(classe_df[liste_colonne], hide_index=True)
 
     with col2:
