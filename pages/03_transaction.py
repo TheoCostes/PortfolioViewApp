@@ -77,8 +77,18 @@ def delete_rows(session_state):
     cursor = conn.cursor()
     for id, state in st.session_state.items():
         if id.split('_')[0] == "delete" and state:
-            cursor.execute(f"DELETE FROM transactions_transaction_history WHERE id = ?",
+            cursor.execute(f"DELETE FROM transaction_history WHERE id = ?",
                            (id.split('_')[1],))
+    conn.commit()
+    conn.close()
+
+
+def add_token_to_db(record_dict):
+    conn = sqlite3.connect("./data/db.sqlite3")
+    cursor = conn.cursor()
+    insert_query = f"INSERT INTO transactions_token ({', '.join(record_dict.keys())})\
+                    VALUES ({', '.join(['?' for _ in record_dict.values()])})"
+    cursor.execute(insert_query, tuple(record_dict.values()))
     conn.commit()
     conn.close()
 
@@ -86,7 +96,7 @@ def delete_rows(session_state):
 def add_database_record(record_dict):
     conn = sqlite3.connect("./data/db.sqlite3")
     cursor = conn.cursor()
-    insert_query = f"INSERT INTO transactions_transaction_history ({', '.join(record_dict.keys())})\
+    insert_query = f"INSERT INTO transaction_history ({', '.join(record_dict.keys())})\
                     VALUES ({', '.join(['?' for _ in record_dict.values()])})"
     cursor.execute(insert_query, tuple(record_dict.values()))
     conn.commit()
@@ -97,8 +107,12 @@ def ajouter_transaction():
     global expanded_state
     conn = sqlite3.connect("./data/db.sqlite3")
     cursor = conn.cursor()
+
     data = cursor.execute("SELECT * FROM transactions_type_transac")
     df_type_transaction = pd.DataFrame(data, columns=[x[0] for x in cursor.description])['name']
+
+    portefeuille = cursor.execute("SELECT * FROM portefeuille_portefeuille")
+    df_portefeuille = pd.DataFrame(portefeuille, columns=[x[0] for x in cursor.description])
 
     data = cursor.execute("SELECT * FROM transactions_token")
     df_token = pd.DataFrame(data, columns=[x[0] for x in cursor.description])
@@ -122,12 +136,17 @@ def ajouter_transaction():
                                        placeholder="Type actif",
                                        )
             token1 = st.selectbox('Token 1',
-                                  df_token['symbole'].unique(),
+                                  df_token['symbole'].unique().tolist() + ['autres'],
                                   index=None,
                                   placeholder="Token",
                                   )
-            description1 = df_token[df_token['symbole'] == token1]['name'].to_string(index=False)
-            st.write(f'Description 1 = {description1}')
+            if token1 == 'autres':
+                token1 = st.text_input('Token 1')
+                description1 = st.text_input('Description 1')
+                st.write(f'Description 1 = {description1}')
+            else:
+                description1 = df_token[df_token['symbole'] == token1]['name'].to_string(index=False)
+                st.write(f'Description 1 = {description1}')
             amount1 = st.number_input('Amount 1',
                                       value=0.0
                                       )
@@ -185,7 +204,22 @@ def ajouter_transaction():
                 "unit_price2": unit_price2,
                 "value2": value2
             }
+
             st.sidebar.write(new_record)
+            if token1 not in df_portefeuille['token'].unique():
+                new_token1 = {
+                    "type": type_actif1,
+                    "symbole": token1,
+                    "name": description1,
+                }
+                add_token_to_db(new_token1)
+            if token2 not in df_portefeuille['token'].unique() and token2 is not None:
+                new_token2 = {
+                    "type": type_actif2,
+                    "symbole": token2,
+                    "name": description2,
+                }
+                add_token_to_db(new_token2)
             add_database_record(new_record)
             st.success("Lignes ajoutées avec succès.")
             #st.session_state['expanded_state'] = False
@@ -196,7 +230,7 @@ def ajouter_transaction():
 # Exemple de DataFrame
 conn = sqlite3.connect("./data/db.sqlite3")
 cursor = conn.cursor()
-data = cursor.execute("SELECT * FROM transactions_transaction_history")
+data = cursor.execute("SELECT * FROM transaction_history")
 df = pd.DataFrame(data, columns=[x[0] for x in cursor.description])
 conn.close()
 

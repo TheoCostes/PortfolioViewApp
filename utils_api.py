@@ -16,7 +16,7 @@ def get_prices(dataframe):
     logging.debug(data)
     dataframe['unit_price'] = dataframe['token'].map(data).fillna(dataframe['unit_price'])
     dataframe['value'] = dataframe['unit_price'] * dataframe['amount']
-    dataframe['last_update'] = datetime.today().strftime("%Y-%m-%d, %H:%M:%S")
+    dataframe['last_update'] = datetime.today().date().strftime("%Y-%m-%d")
     # for symb, prices in data.items():
     #     tok = model.objects.get(token=symb)
     #     tok.unit_price = round(prices, 5)

@@ -33,7 +33,7 @@ df_agg = df_agg.groupby([pd.Grouper(key='last_update', freq='D'), 'type_actif'])
 logging.debug('='*100)
 type_actifs = df["type_actif"].unique().tolist()
 
-if datetime.strptime(df['last_update'].min(), "%Y-%m-%d, %H:%M:%S").date() < datetime.now().date():
+if datetime.strptime(df['last_update'].min(), "%Y-%m-%d").date() < datetime.now().date():
     with st.spinner('Récupération des prix ...'):
         df = get_prices(df)
         logging.debug(df['last_update'].min())
@@ -98,14 +98,15 @@ with col2:
 
 latest_date = df_agg['last_update'].max()
 filtered_df = df_agg[df_agg['last_update'] == latest_date]
-
+logging.debug('debuuuuug')
+logging.debug(filtered_df)
 
 # Pour chaque catégorie, créer une "card" Streamlit avec la valeur correspondante
 col = st.columns(len(type_actifs)+1)
 col[0].metric(label='Asset value', value=filtered_df['value'].sum().round(2))
 for i, actif in enumerate(type_actifs):
     category_data = filtered_df[filtered_df['type_actif'] == actif]
-    value = category_data['value'].round(2).iloc[0]  # Prendre la première valeur (peut-être ajuster en fonction de vos données)
+    value = category_data['value'].round(2).iloc[0]
 
     # Créer une "card" Streamlit
     col[i+1].metric(f"{actif}", value=value)
