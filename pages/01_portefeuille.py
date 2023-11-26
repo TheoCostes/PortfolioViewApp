@@ -36,10 +36,12 @@ df = df_total[df_total['id_portefeuille'] == max(df_total['id_portefeuille'])]
 type_actifs = df["type_actif"].unique().tolist()
 
 # Vérifier si les données nécessitent une mise à jour des prix
-if datetime.strptime(df['last_update'].min(), "%Y-%m-%d").date() < datetime.now().date():
+if datetime.strptime(df['last_update'].min(), "%Y-%m-%d %H:%M:%S").date() < datetime.now().date():
     with st.spinner('Récupération des prix ...'):
         df = get_prices(df)
         df['id'] = df['id'].apply(lambda x: x + len(df) + 1)
+        df['id_portefeuille'] = df['id_portefeuille'].apply(lambda x: x + 1)
+        df['last_update'] = pd.to_datetime(df['last_update'], format='mixed')
         df.to_sql("portefeuille_portefeuille", con=conn, index=False, if_exists='append')
     conn.close()
 else:
@@ -58,6 +60,8 @@ df_agg = df_agg.groupby(['id_portefeuille', pd.Grouper(key='last_update', freq='
 
 df_agg = pd.concat([df_agg, df.groupby(['last_update', 'type_actif']).agg({'value': np.sum,
                                                               'id_portefeuille': np.max}).reset_index()])
+logging.debug("debug df-agg")
+logging.debug(df_agg['last_update'])
 
 
 # Configuration des options pour le graphique pie
