@@ -7,6 +7,7 @@ import logging
 
 # TODO : edit une transaction
 
+
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialiser les paramètres de page Streamlit
@@ -297,6 +298,8 @@ df = pd.read_sql_query("SELECT * FROM transaction_history", conn)
 df["date"] = pd.to_datetime(df["date"], format="mixed", dayfirst=True)
 df.sort_values(by="date", ascending=False, inplace=True)
 conn.close()
+
+
 
 # Afficher la table avec pagination et colonne de sélection
 st.title("Transactions")
