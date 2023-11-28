@@ -28,17 +28,27 @@ def paginate_dataframe(dataframe, page_size, page_num):
     """Paginer le DataFrame"""
     if page_size is None:
         return None
-    logging.debug(f"{page_size} | {page_num}")
     offset = page_size * (page_num - 1)
     return dataframe[offset : offset + page_size]
 
 
-def delete_rows(session_state):
+def delete_rows(session_state, transaction_df_page):
     """Supprimer les lignes sélectionnées de la base de données"""
     conn = sqlite3.connect("./data/db.sqlite3")
     cursor = conn.cursor()
-    for id, state in st.session_state.items():
+    for id, state in session_state.items():
         if id.split("_")[0] == "delete" and state:
+            transaction_to_delete_df = transaction_df_page.loc[
+                transaction_df_page["id"] == int(id.split("_")[1])
+            ]
+            transaction_to_delete = transaction_to_delete_df.to_dict(orient="index")[
+                transaction_to_delete_df.index[0]
+            ]
+            update_portefeuille(
+                transaction_to_delete,
+                transaction_to_delete["type_transaction"],
+                delete=True,
+            )
             cursor.execute(
                 f"DELETE FROM transaction_history WHERE id = ?", (id.split("_")[1],)
             )
@@ -68,7 +78,7 @@ def add_database_record(record_dict):
     conn.close()
 
 
-def update_portefeuille(new_transaction, type_transaction):
+def update_portefeuille(new_transaction, type_transaction, delete=None):
     conn = sqlite3.connect("./data/db.sqlite3")
     cursor = conn.cursor()
     df_portefeuille = pd.read_sql_query(
@@ -79,25 +89,36 @@ def update_portefeuille(new_transaction, type_transaction):
     ]
     df_copy_port["last_update"] = datetime.today().date().strftime("%Y-%m-%d")
     update_token_portefeuille(
-        conn, df_copy_port, df_portefeuille, new_transaction, type_token="1"
+        conn,
+        df_copy_port,
+        df_portefeuille,
+        new_transaction,
+        type_token="1",
+        delete=delete,
     )
 
     if type_transaction == "Swap":
         update_token_portefeuille(
-            conn, df_copy_port, df_portefeuille, new_transaction, type_token="2"
+            conn,
+            df_copy_port,
+            df_portefeuille,
+            new_transaction,
+            type_token="2",
+            delete=delete,
         )
 
 
 def update_token_portefeuille(
-    conn, df_copy_port, df_portefeuille, new_transaction, type_token="1"
+    conn, df_copy_port, df_portefeuille, new_transaction, type_token="1", delete=None
 ):
-    logging.debug(f"new_transaction['token' + type_token] = {new_transaction['token' + type_token]}")
-    logging.debug(f"new_transaction['token' + type_token] = {df_portefeuille['token'].unique()}")
+    if delete:
+        ratio_delete = -1
+    else:
+        ratio_delete = 1
     len_df = len(df_copy_port)
     max_id = max(df_copy_port["id"])
     max_id_portefeuille = max(df_copy_port["id"])
     if new_transaction["token" + type_token] not in df_portefeuille["token"].unique():
-        logging.debug("NEW TOKEN")
         new_token_portefeuille = {
             "id": max_id + 1,
             "id_portefeuille": max_id_portefeuille + 1,
@@ -105,22 +126,23 @@ def update_token_portefeuille(
             "type_actif": new_transaction["type_actif" + type_token],
             "token": new_transaction["token" + type_token],
             "description": new_transaction["description" + type_token],
-            "amount": new_transaction["amount" + type_token],
+            "amount": ratio_delete * new_transaction["amount" + type_token],
             "unit_price": new_transaction["unit_price" + type_token],
             "value": new_transaction["value" + type_token],
         }
-        pd.concat([df_copy_port, pd.DataFrame(new_token_portefeuille, index=[0])], ignore_index=True)
+        pd.concat(
+            [df_copy_port, pd.DataFrame(new_token_portefeuille, index=[0])],
+            ignore_index=True,
+        )
 
     else:
-        logging.debug("UPDATE TOKEN")
-        logging.debug(df_copy_port.loc[
-            df_copy_port["token"] == new_transaction["token" + type_token], ["amount"]
-        ])
         df_copy_port.loc[
             df_copy_port["token"] == new_transaction["token" + type_token], ["amount"]
-        ] += new_transaction["amount" + type_token]
-    df_copy_port['id'] = df_copy_port['id'].apply(lambda x: x + len_df + 1)
-    df_copy_port['id_portefeuille'] = df_copy_port['id_portefeuille'].apply(lambda x: x + 1)
+        ] += (ratio_delete * new_transaction["amount" + type_token])
+    df_copy_port["id"] = df_copy_port["id"].apply(lambda x: x + len_df + 1)
+    df_copy_port["id_portefeuille"] = df_copy_port["id_portefeuille"].apply(
+        lambda x: x + 1
+    )
     df_copy_port.to_sql(
         "portefeuille_portefeuille", con=conn, index=False, if_exists="append"
     )
@@ -225,8 +247,6 @@ def ajouter_transaction():
             }
 
             if token1 not in df_token["symbole"].unique():
-                logging.debug('NEW TOKEN1')
-                logging.debug(token1, )
                 new_token1 = {
                     "type": type_actif1,
                     "symbole": token1,
@@ -234,7 +254,6 @@ def ajouter_transaction():
                 }
                 add_token_to_db(new_token1)
             if token2 not in df_token["symbole"].unique() and token2 is not None:
-                logging.debug('NEW TOKEN1')
                 new_token2 = {
                     "type": type_actif2,
                     "symbole": token2,
@@ -242,8 +261,8 @@ def ajouter_transaction():
                 }
                 add_token_to_db(new_token2)
 
-            add_database_record(new_record)
             update_portefeuille(new_record, type_transaction)
+            add_database_record(new_record)
             st.success("Lignes ajoutées avec succès.")
             expanded_state = False
             st.rerun()
@@ -251,12 +270,11 @@ def ajouter_transaction():
 
 def display_table_with_pagination(dataframe, page_size=10):
     col1, col2, col3, col4 = st.columns((2, 2, 1, 1))
-
+    st.sidebar.write(st.session_state)
     page_size = col1.selectbox(
         "nombre de ligne par page", [10 + i * 5 for i in range(10)]
     )
     total_num = ceil(len(dataframe) // page_size) + 1
-    logging.debug(total_num)
     page_num = col2.selectbox(
         "", [i + 1 for i in range(total_num)], format_func=lambda x: "page " + str(x)
     )
@@ -287,7 +305,7 @@ def display_table_with_pagination(dataframe, page_size=10):
     # Bouton pour supprimer les lignes sélectionnées
     if placeholder_button_delete.button("Supprimer les lignes sélectionnées"):
         # selected_rows = dataframe[dataframe["edit"] == True]
-        delete_rows(st.session_state)
+        delete_rows(st.session_state, transaction_df_page)
         st.success("Lignes supprimées avec succès.")
         st.rerun()
 
@@ -298,7 +316,6 @@ df = pd.read_sql_query("SELECT * FROM transaction_history", conn)
 df["date"] = pd.to_datetime(df["date"], format="mixed", dayfirst=True)
 df.sort_values(by="date", ascending=False, inplace=True)
 conn.close()
-
 
 
 # Afficher la table avec pagination et colonne de sélection
