@@ -37,7 +37,7 @@ type_actifs = df["type_actif"].unique().tolist()
 
 # Vérifier si les données nécessitent une mise à jour des prix
 if (
-    datetime.strptime(df["last_update"].min(), "%Y-%m-%d").date()
+    datetime.strptime(df["last_update"].min(), "%Y-%m-%d %H:%M:%S").date()
     < datetime.now().date()
 ):
     with st.spinner("Récupération des prix ..."):
@@ -56,12 +56,16 @@ else:
         df["last_update"] = pd.to_datetime(df["last_update"], format="mixed")
     conn.close()
 
+df_total['last_update'] = pd.to_datetime(df_total['last_update'], format='mixed')
+logging.debug("debug df-total")
+logging.debug(df_total)
 df_agg = (
     df_total.groupby(["id_portefeuille", "type_actif"])
     .agg({"value": np.sum, "last_update": np.max})
     .reset_index()
 )
-
+logging.debug("debug df-agg")
+logging.debug(df_agg)
 # Traitement des dates
 df_agg["last_update"] = pd.to_datetime(df_agg["last_update"], format="mixed")
 df_agg = (
@@ -71,7 +75,9 @@ df_agg = (
     .sum()
     .reset_index()
 )
-
+logging.debug("debug df-agg")
+logging.debug(df_agg)
+logging.debug(df)
 df_agg = pd.concat(
     [
         df_agg,
