@@ -331,7 +331,19 @@ else :
 
         display_table_with_pagination(df)
     except Exception as e:
-        uploaded_file = st.file_uploader("Upload a csv file containing transaction history", type="csv")
-        if uploaded_file is not None:
-            dataframe = pd.read_csv(uploaded_file)
+        uploaded_file_transaction = st.file_uploader("Upload a csv file containing transaction history", type="csv")
+        if uploaded_file_transaction is not None:
+            dataframe = pd.read_csv(uploaded_file_transaction)
             st.write(dataframe)
+            conn = sqlite3.connect("./data/db.sqlite3")
+            dataframe.to_sql("transaction_history", con=conn, index=False, if_exists="append")
+            conn.close()
+
+        uploaded_file_token = st.file_uploader("Upload a csv file containing transaction token", type="csv")
+        if uploaded_file_token is not None:
+            dataframe = pd.read_csv(uploaded_file_token)
+            st.write(dataframe)
+            conn = sqlite3.connect("./data/db.sqlite3")
+            dataframe.to_sql("transactions_token", con=conn, index=False, if_exists="append")
+            conn.close()
+            st.rerun()
