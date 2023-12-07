@@ -310,18 +310,28 @@ def display_table_with_pagination(dataframe, page_size=10):
         st.rerun()
 
 
-# Exemple de DataFrame
-conn = sqlite3.connect("./data/db.sqlite3")
-df = pd.read_sql_query("SELECT * FROM transaction_history", conn)
-df["date"] = pd.to_datetime(df["date"], format="mixed", dayfirst=True)
-df.sort_values(by="date", ascending=False, inplace=True)
-conn.close()
+
+if not st.session_state["authentication_status"]:
+    st.warning("**Access is restricted. Please go connect !**")
+else :
+    # Exemple de DataFrame
+    try:
+        conn = sqlite3.connect("./data/db.sqlite3")
+        df = pd.read_sql_query("SELECT * FROM transaction_history", conn)
+        df["date"] = pd.to_datetime(df["date"], format="mixed", dayfirst=True)
+        df.sort_values(by="date", ascending=False, inplace=True)
+        conn.close()
 
 
-# Afficher la table avec pagination et colonne de sélection
-st.title("Transactions")
+        # Afficher la table avec pagination et colonne de sélection
+        st.title("Transactions")
 
-with st.expander("Ajouter une transaction", expanded=expanded_state):
-    ajouter_transaction()
+        with st.expander("Ajouter une transaction", expanded=expanded_state):
+            ajouter_transaction()
 
-display_table_with_pagination(df)
+        display_table_with_pagination(df)
+    except Exception as e:
+        uploaded_file = st.file_uploader("Upload a csv file containing transaction history", type="csv")
+        if uploaded_file is not None:
+            dataframe = pd.read_csv(uploaded_file)
+            st.write(dataframe)
