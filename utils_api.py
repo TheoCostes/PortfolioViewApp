@@ -2,9 +2,13 @@ import contextlib
 import os
 from requests import Session, get
 import json
-from config import API_COINMARKET, API_VANTAGE
 from datetime import datetime
 import logging
+import streamlit as st
+
+
+API_COINMARKET = st.secrets["API_COINMARKET"]
+API_VANTAGE = st.secrets["API_VANTAGE"]
 
 
 def get_prices(dataframe):

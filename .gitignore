@@ -4,6 +4,7 @@ suivi_portfolio/suivi_portfolio/.env
 ./venv/
 suivi_portfolio/portefeuille/__pycache__/
 suivi_portfolio/authentication/__pycache__/
+.streamlit/secrets.toml
 
 *.sqlite3
 config.py
