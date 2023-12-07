@@ -44,7 +44,8 @@ def setup_database():
     c = conn.cursor()
 
     c.execute("""CREATE TABLE IF NOT EXISTS transaction_history
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,  
+                  id_user VARCHAR,
                   date VARCHAR,
                   type_transaction VARCHAR,
                   type_actif1 VARCHAR,
@@ -75,7 +76,8 @@ def setup_database():
                 ''')
 
     c.execute('''CREATE TABLE IF NOT EXISTS transactions_token
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                  id_user VARCHAR,
                   name VARCHAR, 
                   symbole VARCHAR,
                   type VARCHAR)

@@ -209,3 +209,7 @@ else:
         if uploaded_file is not None:
             dataframe = pd.read_csv(uploaded_file)
             st.write(dataframe)
+            conn = sqlite3.connect("./data/db.sqlite3")
+            dataframe.to_sql("portefeuille_portefeuille", con=conn, index=False, if_exists="append")
+            conn.close()
+            st.rerun()
