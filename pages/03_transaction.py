@@ -331,18 +331,21 @@ else :
 
         display_table_with_pagination(df)
     except Exception as e:
-        uploaded_file_transaction = st.file_uploader("Upload a csv file containing transaction history", type="csv")
-        if uploaded_file_transaction is not None:
-            dataframe = pd.read_csv(uploaded_file_transaction)
-            st.write(dataframe)
-            conn = sqlite3.connect("./data/db.sqlite3")
-            dataframe.to_sql("transaction_history", con=conn, index=False, if_exists="append")
-            conn.close()
-
         uploaded_file_token = st.file_uploader("Upload a csv file containing transaction token", type="csv")
         if uploaded_file_token is not None:
-            dataframe = pd.read_csv(uploaded_file_token)
-            st.write(dataframe)
+            dataframe_token = pd.read_csv(uploaded_file_token)
+            st.write(dataframe_token)
+            if st.button("add to db", key='add_token'):
+                conn = sqlite3.connect("./data/db.sqlite3")
+                dataframe_token.to_sql("transaction_token", con=conn, index=False, if_exists="append")
+                conn.close()
 
-        if st.button("add to db"):
-            st.rerun()
+        uploaded_file_transaction = st.file_uploader("Upload a csv file containing transaction history", type="csv")
+        if uploaded_file_transaction is not None:
+            dataframe_transaction = pd.read_csv(uploaded_file_transaction)
+            st.write(dataframe_transaction)
+            if st.button("add to db", key='add_transaction'):
+                conn = sqlite3.connect("./data/db.sqlite3")
+                (dataframe_transaction.to_sql("transaction_history", con=conn, index=False, if_exists="append"))
+                conn.close()
+
