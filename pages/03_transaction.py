@@ -343,7 +343,6 @@ else :
         if uploaded_file_token is not None:
             dataframe = pd.read_csv(uploaded_file_token)
             st.write(dataframe)
-            conn = sqlite3.connect("./data/db.sqlite3")
-            dataframe.to_sql("transactions_token", con=conn, index=False, if_exists="append")
-            conn.close()
+
+        if st.button("add to db"):
             st.rerun()
