@@ -5,7 +5,10 @@ import json
 from datetime import datetime
 import logging
 import streamlit as st
+import pandas as pd
+import sqlite3
 
+from pages.portefeuille import connect_to_database
 
 API_COINMARKET = st.secrets["API_COINMARKET"]
 API_VANTAGE = st.secrets["API_VANTAGE"]
@@ -88,3 +91,18 @@ def get_quote_bourse(dataframe):
                 data = response.json()
                 QUOTE[symb] = float(data.get("Global Quote", {})['05. price'])
     return QUOTE
+
+
+def update_prices():
+    """Update the prices of the Portefeuille in db"""
+    df_total = connect_to_database()
+    df_last = df_total[df_total["id_portefeuille"] == max(df_total["id_portefeuille"])]
+    df_last = get_prices(df_last)
+
+    df_last["id_portefeuille"] = df_last["id_portefeuille"].apply(lambda x: x + 1)
+    df_last["last_update"] = pd.to_datetime(df_last["last_update"], format="mixed")
+    df_last["id"] = df_last["id"].apply(lambda x: x + len(df_last) + 1)
+
+    conn = sqlite3.connect("./data/db.sqlite3")
+    df_last.to_sql("portefeuille_portefeuille", con=conn, index=False, if_exists="append")
+    conn.close()

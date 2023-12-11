@@ -6,6 +6,8 @@ from yaml.loader import SafeLoader
 import streamlit_authenticator as stauth
 
 import streamlit as st
+from threading import Thread
+import scheduler
 
 
 def setup_user_auth():
@@ -87,6 +89,8 @@ def setup_database():
     c.close()
     conn.close()
 
+if "authentication_status" not in st.session_state:
+    st.session_state["authentication_status"] = None
 
 st.title("Bienvenue sur l'app de suivie de portefeuille !")
 setup_database()
@@ -144,3 +148,13 @@ with tabs2:
                 yaml.dump(config, file, default_flow_style=False)
     except Exception as e:
         st.error(e)
+
+
+# Fonction pour exécuter le planificateur dans un thread séparé
+def run_scheduler():
+    scheduler.run_scheduler()
+
+
+# Lancez le planificateur dans un thread
+scheduler_thread = Thread(target=run_scheduler)
+scheduler_thread.start()

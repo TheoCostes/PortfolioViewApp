@@ -12,8 +12,6 @@ import logging
 from streamlit_extras.chart_container import chart_container
 from streamlit_extras.metric_cards import style_metric_cards
 
-from utils_api import get_prices
-
 
 def connect_to_database():
     conn = sqlite3.connect("./data/db.sqlite3")
@@ -22,18 +20,6 @@ def connect_to_database():
     df_total = pd.DataFrame(data, columns=[x[0] for x in cursor.description])
     conn.close()
     return df_total
-
-
-def update_prices(df, first_time=False):
-    df = get_prices(df)
-    df["id_portefeuille"] = df["id_portefeuille"].apply(lambda x: x + 1)
-    df["last_update"] = pd.to_datetime(df["last_update"], format="mixed")
-    if first_time:
-        df["id"] = df["id"].apply(lambda x: x + len(df) + 1)
-        conn = sqlite3.connect("./data/db.sqlite3")
-        df.to_sql("portefeuille_portefeuille", con=conn, index=False, if_exists="append")
-        conn.close()
-    return df
 
 
 def process_data(df_total, df_last):
@@ -51,14 +37,7 @@ def process_data(df_total, df_last):
         .sum()
         .reset_index()
     )
-    df_agg = pd.concat(
-        [
-            df_agg,
-            df_last.groupby(["last_update", "type_actif"])
-            .agg({"value": np.sum, "id_portefeuille": np.max})
-            .reset_index(),
-        ]
-    )
+
     return df_agg
 
 
@@ -161,13 +140,6 @@ else:
         col[2].title("")
         masquer_valeurs = col[2].toggle("mode discret")
         st.write("")
-
-        if datetime.strptime(df_last["last_update"].min(), "%Y-%m-%d %H:%M:%S").date() < datetime.now().date():
-            with st.spinner("Récupération des prix ..."):
-                df_last = update_prices(df_last, first_time=True)
-        else:
-            with st.spinner("Récupération des prix ..."):
-                df_last = update_prices(df_last)
 
         df_agg = process_data(df_total, df_last)
 
