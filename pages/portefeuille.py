@@ -11,30 +11,14 @@ from datetime import datetime
 import logging
 from streamlit_extras.chart_container import chart_container
 from streamlit_extras.metric_cards import style_metric_cards
-
-
-def connect_to_database():
-    conn = sqlite3.connect("./data/db.sqlite3")
-    cursor = conn.cursor()
-    data = cursor.execute(f"SELECT * FROM portefeuille_portefeuille where id_user = '{st.session_state['username']}'")
-    df_total = pd.DataFrame(data, columns=[x[0] for x in cursor.description])
-    conn.close()
-    return df_total
+from st_files_connection import FilesConnection
 
 
 def process_data(df_total, df_last):
     df_total['last_update'] = pd.to_datetime(df_total['last_update'], format='mixed')
     df_agg = (
-        df_total.groupby(["id_portefeuille", "type_actif"])
-        .agg({"value": np.sum, "last_update": np.max})
-        .reset_index()
-    )
-    df_agg["last_update"] = pd.to_datetime(df_agg["last_update"], format="mixed")
-    df_agg = (
-        df_agg.groupby(
-            ["id_portefeuille", pd.Grouper(key="last_update", freq="D"), "type_actif"]
-        )["value"]
-        .sum()
+        df_total.groupby(["type_actif", "id_portefeuille", "last_update"])
+        .agg({"value": np.sum})
         .reset_index()
     )
 
@@ -71,10 +55,10 @@ def plot_portfolio_evolution(df, x, y, color):
 def display_pie_and_evolution(df_agg,df_last, col1, col2):
     df_actif = df_last.groupby("type_actif").sum("value").reset_index()
     df_visu = df_actif[["value", "type_actif"]]
-
+    total = np.sum(df_actif['value'])
     with col1:
         option["series"][0]["data"] = [
-            dict(value=row["value"], name=row["type_actif"])
+            dict(value=round(row["value"]/total * 100,1) , name=row["type_actif"])
             for index, row in df_visu.iterrows()
         ]
         streamlit_echarts.st_echarts(option, height="400px")
@@ -126,11 +110,13 @@ def display_expanders(df, type_actifs):
 st.set_page_config(page_title="portefeuille", layout="wide")
 logging.basicConfig(level=logging.DEBUG)
 
+conn = st.connection('s3', type=FilesConnection)
+df_total = conn.read("dashboard-invest/portefeuille.csv", input_format="csv", ttl=600)
+
 if not st.session_state["authentication_status"]:
     st.warning("**Access is restricted. Please go connect !**")
 else:
     try:
-        df_total = connect_to_database()
         df_last = df_total[df_total["id_portefeuille"] == max(df_total["id_portefeuille"])]
 
         type_actifs = df_last["type_actif"].unique().tolist()
@@ -142,7 +128,6 @@ else:
         st.write("")
 
         df_agg = process_data(df_total, df_last)
-
         option = configure_pie_chart_option()
 
         col1, col2 = st.columns(2)
