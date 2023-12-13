@@ -1,0 +1,16 @@
+cookie:
+  expiry_days: 30
+  key: user
+  name: session_state
+credentials:
+  usernames:
+    admin:
+      email: tharic100@gmail.com
+      name: admin
+      password: admin
+    theocostes:
+      email: Theocostes77@gmail.com
+      name: "Th\xE9o Costes"
+      password: $2b$12$sjS5J5CG.h.QP8IkyFZNeue1rsRK4QuFO/R6M6F2O6nHxlyudYTum
+preauthorized:
+  emails: '- tharic100@gmail.com'
