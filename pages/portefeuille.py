@@ -7,7 +7,6 @@ import streamlit as st
 import pandas as pd
 import streamlit_echarts
 import sqlite3
-from datetime import datetime
 import logging
 from streamlit_extras.chart_container import chart_container
 from streamlit_extras.metric_cards import style_metric_cards
@@ -94,7 +93,9 @@ def display_expanders(df, type_actifs):
         liste_colonne = ["token", "description", "unit_price", "amount", "value"]
         with col1:
             st.empty()
-            st.dataframe(classe_df[liste_colonne], hide_index=True)
+            st.write('COUCOUCOUCOUCOUCOUCOCUOU')
+            plot_portfolio_evolution(classe_df[liste_colonne], "last_update", "value", "token")
+            # st.dataframe(classe_df[liste_colonne], hide_index=True)
 
         with col2:
             df_visu = classe_df[["value", "token"]]
@@ -117,7 +118,7 @@ if not st.session_state["authentication_status"]:
     st.warning("**Access is restricted. Please go connect !**")
 else:
     try:
-        df_last = df_total[df_total["id_portefeuille"] == max(df_total["id_portefeuille"])]
+        df_last = df_total[(df_total['id_user'] == st.session_state["username"]) & (df_total["id_portefeuille"] == max(df_total["id_portefeuille"]))]
 
         type_actifs = df_last["type_actif"].unique().tolist()
 

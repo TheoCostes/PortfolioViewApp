@@ -50,8 +50,8 @@ def reset_password():
 
 
 if st.session_state["authentication_status"]:
-    authenticator.logout('Logout', 'main', key='unique_key')
-    st.success(f'Connnexion Réussi ! Welcome *{st.session_state["name"]}*')
+    authenticator.logout('Logout', 'sidebar', key='unique_key')
+    st.sidebar.success(f'Connnexion Réussi ! Welcome *{st.session_state["name"]}*')
 elif st.session_state["authentication_status"] is False:
     with tabs1:
         authenticator.login('Login', 'main')
