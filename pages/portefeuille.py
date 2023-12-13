@@ -10,6 +10,7 @@ import sqlite3
 import logging
 from streamlit_extras.chart_container import chart_container
 from streamlit_extras.metric_cards import style_metric_cards
+import s3fs
 from st_files_connection import FilesConnection
 
 
