@@ -4,6 +4,7 @@ from st_files_connection import FilesConnection
 import logging
 
 from yaml import SafeLoader
+import s3fs
 import streamlit_authenticator as stauth
 
 st.title("Bienvenue sur l'app de suivie de portefeuille !")

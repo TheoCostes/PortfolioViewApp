@@ -5,7 +5,7 @@ import sqlite3
 import pandas as pd
 import logging
 from st_files_connection import FilesConnection
-
+import s3fs
 
 # TODO : edit une transaction
 
