@@ -5,11 +5,20 @@ import json
 from datetime import datetime
 import logging
 import streamlit as st
-
+import pandas as pd
+import sqlite3
 
 API_COINMARKET = st.secrets["API_COINMARKET"]
 API_VANTAGE = st.secrets["API_VANTAGE"]
 
+
+def connect_to_database(db, table):
+    conn = sqlite3.connect(db)
+    cursor = conn.cursor()
+    data = cursor.execute(f"SELECT * FROM {table} where id_user = '{st.session_state['username']}'")
+    df_total = pd.DataFrame(data, columns=[x[0] for x in cursor.description])
+    conn.close()
+    return df_total
 
 def get_prices(dataframe):
     # Vérifier si la dernière mise à jour a eu lieu aujourd'hui
@@ -88,3 +97,18 @@ def get_quote_bourse(dataframe):
                 data = response.json()
                 QUOTE[symb] = float(data.get("Global Quote", {})['05. price'])
     return QUOTE
+
+
+def update_prices():
+    """Update the prices of the Portefeuille in db"""
+    df_total = connect_to_database("./data/db.sqlite3", 'portefeuille_portefeuille' )
+    df_last = df_total[df_total["id_portefeuille"] == max(df_total["id_portefeuille"])]
+    df_last = get_prices(df_last)
+
+    df_last["id_portefeuille"] = df_last["id_portefeuille"].apply(lambda x: x + 1)
+    df_last["last_update"] = pd.to_datetime(df_last["last_update"], format="mixed")
+    df_last["id"] = df_last["id"].apply(lambda x: x + len(df_last) + 1)
+
+    conn = sqlite3.connect("../data/db.sqlite3")
+    df_last.to_sql("portefeuille_portefeuille", con=conn, index=False, if_exists="append")
+    conn.close()

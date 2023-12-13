@@ -6,6 +6,8 @@ from yaml.loader import SafeLoader
 import streamlit_authenticator as stauth
 
 import streamlit as st
+from threading import Thread
+import scheduler
 
 
 def setup_user_auth():
@@ -89,18 +91,18 @@ def setup_database():
 
 
 st.title("Bienvenue sur l'app de suivie de portefeuille !")
-setup_database()
+# setup_database()
 
-with open('./config_auth.yaml') as file:
-    config = yaml.load(file, Loader=SafeLoader)
+# with open('./config_auth.yaml') as file:
+ #   config = yaml.load(file, Loader=SafeLoader)
 
-authenticator = stauth.Authenticate(
-    config['credentials'],
-    config['cookie']['name'],
-    config['cookie']['key'],
-    config['cookie']['expiry_days'],
-    config['preauthorized']
-)
+# authenticator = stauth.Authenticate(
+#     config['credentials'],
+#     config['cookie']['name'],
+#     config['cookie']['key'],
+#     config['cookie']['expiry_days'],
+#     config['preauthorized']
+# )
 
 tabs1, tabs2 = st.tabs(["Login", "Register"])
 
@@ -119,28 +121,38 @@ def reset_password():
 
 
 
+#
+# if st.session_state["authentication_status"]:
+#     authenticator.logout('Logout', 'main', key='unique_key')
+#     st.success(f'Connnexion Réussi ! Welcome *{st.session_state["name"]}*')
+# elif st.session_state["authentication_status"] is False:
+#     with tabs1:
+#         authenticator.login('Login', 'main')
+#         st.error('Username/password is incorrect')
+#         reset_password()
+# elif st.session_state["authentication_status"] is None:
+#     with tabs1:
+#         authenticator.login('Login', 'main')
+#         st.warning('Please enter your username and password')
+#         reset_password()
+#
+#
+#
+# with tabs2:
+#     try:
+#         if authenticator.register_user('Register user', preauthorization=False):
+#             st.success('User registered successfully')
+#             with open('./config_auth.yaml', 'w') as file:
+#                 yaml.dump(config, file, default_flow_style=False)
+#     except Exception as e:
+#         st.error(e)
 
-if st.session_state["authentication_status"]:
-    authenticator.logout('Logout', 'main', key='unique_key')
-    st.success(f'Connnexion Réussi ! Welcome *{st.session_state["name"]}*')
-elif st.session_state["authentication_status"] is False:
-    with tabs1:
-        authenticator.login('Login', 'main')
-        st.error('Username/password is incorrect')
-        reset_password()
-elif st.session_state["authentication_status"] is None:
-    with tabs1:
-        authenticator.login('Login', 'main')
-        st.warning('Please enter your username and password')
-        reset_password()
 
-
-
-with tabs2:
-    try:
-        if authenticator.register_user('Register user', preauthorization=False):
-            st.success('User registered successfully')
-            with open('./config_auth.yaml', 'w') as file:
-                yaml.dump(config, file, default_flow_style=False)
-    except Exception as e:
-        st.error(e)
+# # Fonction pour exécuter le planificateur dans un thread séparé
+# def run_scheduler():
+#     scheduler.run_scheduler()
+#
+#
+# # Lancez le planificateur dans un thread
+# scheduler_thread = Thread(target=run_scheduler)
+# scheduler_thread.start()

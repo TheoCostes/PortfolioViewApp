@@ -4,6 +4,8 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 import logging
+from st_files_connection import FilesConnection
+
 
 # TODO : edit une transaction
 
@@ -315,13 +317,14 @@ if not st.session_state["authentication_status"]:
     st.warning("**Access is restricted. Please go connect !**")
 else :
     # Exemple de DataFrame
+    conn = st.connection('s3', type=FilesConnection)
+    df_transc = conn.read("dashboard-invest/transaction_history.csv", input_format="csv", ttl=600)
+    df_transc["date"] = pd.to_datetime(df_transc["date"], format="mixed", dayfirst=True)
+    st.dataframe(df_transc)
     try:
-        conn = sqlite3.connect("./data/db.sqlite3")
-        df = pd.read_sql_query("SELECT * FROM transaction_history", conn)
-        df["date"] = pd.to_datetime(df["date"], format="mixed", dayfirst=True)
-        df.sort_values(by="date", ascending=False, inplace=True)
-        conn.close()
 
+        df_transc.sort_values(by="date", ascending=False, inplace=True)
+        df_transc = df_transc[df_transc['id_user'] == st.session_state["username"]]
 
         # Afficher la table avec pagination et colonne de sélection
         st.title("Transactions")
@@ -329,7 +332,7 @@ else :
         with st.expander("Ajouter une transaction", expanded=expanded_state):
             ajouter_transaction()
 
-        display_table_with_pagination(df)
+        display_table_with_pagination(df_transc)
     except Exception as e:
         uploaded_file_token = st.file_uploader("Upload a csv file containing transaction token", type="csv")
         if uploaded_file_token is not None:
