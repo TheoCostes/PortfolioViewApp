@@ -126,7 +126,7 @@ else:
             expander = st.expander(f"{classe}")
             col1, col2 = expander.columns(2)
 
-            liste_colonne = ["token", "description", "unit_price", "amount", "value"]
+            liste_colonne = ["last_update","token", "description", "unit_price", "amount", "value"]
             with col1:
                 st.empty()
                 # st.dataframe(classe_df[liste_colonne], hide_index=True)
