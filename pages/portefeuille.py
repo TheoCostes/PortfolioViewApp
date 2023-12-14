@@ -46,7 +46,6 @@ def configure_pie_chart_option():
 
 def plot_portfolio_evolution(df, x, y, color):
     max_ids = df.groupby("last_update")["id_portefeuille"].max().reset_index()
-    st.dataframe(max_ids)
     result_df = pd.merge(max_ids, df, on=["last_update", "id_portefeuille"], how="left")
     with chart_container(result_df):
         st.write("Portfolio evolution par type d'actif")
@@ -131,7 +130,6 @@ else:
             with col1:
                 st.empty()
                 # st.dataframe(classe_df[liste_colonne], hide_index=True)
-                st.dataframe(total_par_actif[liste_colonne])
                 plot_portfolio_evolution(total_par_actif, "last_update", "value", "token")
 
             with col2:
