@@ -83,31 +83,6 @@ def display_asset_value_cards(df, col, type_actifs, masquer_valeurs):
             col[i + 1].metric(f"{actif}", value=value)
 
 
-def display_expanders(df, type_actifs):
-    for classe in type_actifs:
-        classe_df = df[df["type_actif"] == classe].sort_values(by="value", ascending=False)
-        total = classe_df["value"].sum().round(2)
-
-        expander = st.expander(f"{classe}")
-        col1, col2 = expander.columns(2)
-
-        liste_colonne = ["token", "description", "unit_price", "amount", "value"]
-        with col1:
-            st.empty()
-            st.write('COUCOUCOUCOUCOUCOUCOCUOU')
-            plot_portfolio_evolution(classe_df[liste_colonne], "last_update", "value", "token")
-            # st.dataframe(classe_df[liste_colonne], hide_index=True)
-
-        with col2:
-            df_visu = classe_df[["value", "token"]]
-            option["series"][0]["data"] = [
-                dict(value=row["value"], name=row["token"])
-                for index, row in classe_df.iterrows()
-            ]
-
-            streamlit_echarts.st_echarts(option, height="400px")
-
-
 # Configuration de la page Streamlit
 st.set_page_config(page_title="portefeuille", layout="wide")
 logging.basicConfig(level=logging.DEBUG)
@@ -142,6 +117,7 @@ else:
 
         for classe in type_actifs:
             # display_expanders(df_last, type_actifs)
+            total_par_actif = df_total[df_total["type_actif"] == classe].sort_values(by="value", ascending=False)
             classe_df = df_last[df_last["type_actif"] == classe].sort_values(by="value", ascending=False)
 
             # Calcul du total
@@ -153,7 +129,8 @@ else:
             liste_colonne = ["token", "description", "unit_price", "amount", "value"]
             with col1:
                 st.empty()
-                st.dataframe(classe_df[liste_colonne], hide_index=True)
+                # st.dataframe(classe_df[liste_colonne], hide_index=True)
+                plot_portfolio_evolution(total_par_actif[liste_colonne], "last_update", "value", "token")
 
             with col2:
                 df_visu = classe_df[["value", "token"]]
