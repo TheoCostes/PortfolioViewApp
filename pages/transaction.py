@@ -324,7 +324,6 @@ else :
     try:
 
         df_transc.sort_values(by="date", ascending=False, inplace=True)
-        df_transc = df_transc[df_transc['id_user'] == st.session_state["username"]]
 
         # Afficher la table avec pagination et colonne de sélection
         st.title("Transactions")
