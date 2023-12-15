@@ -6,73 +6,105 @@ import logging
 from yaml import SafeLoader
 import s3fs
 import streamlit_authenticator as stauth
+import hmac
 
-st.title("Bienvenue sur l'app de suivie de portefeuille !")
+
+
+
+def log_out():
+    """Logs out the user."""
+    st.session_state["user_logged_in"] = False
+
+
+def check_password():
+    """Returns `True` if the user had a correct password."""
+
+    def login_form():
+        """Form with widgets to collect user information"""
+        with st.form("Credentials"):
+            st.text_input("Username", key="username")
+            st.text_input("Password", type="password", key="password")
+            st.form_submit_button("Log in", on_click=password_entered)
+
+    def password_entered():
+        """Checks whether a password entered by the user is correct."""
+        if st.session_state["username"] in st.secrets[
+            "passwords"
+        ] and hmac.compare_digest(
+            st.session_state["password"],
+            st.secrets.passwords[st.session_state["username"]],
+        ):
+            st.session_state["user_logged_in"] = True
+            del st.session_state["password"]  # Don't store the username or password.
+        else:
+            st.session_state["user_logged_in"] = False
+
+    # Return True if the username + password is validated.
+    if st.session_state.get("user_logged_in", False):
+        return True
+
+    # Show inputs for username + password.
+    st.title("Bienvenue sur l'app Connectez vous pour acceder au dashboard")
+
+    if st.button("Register"):
+        try:
+            return new_user()
+        except:
+            st.error("😕 User not known or password incorrect")
+    if st.button("Log in"):
+        login_form()
+    if "user_logged_in" in st.session_state:
+        st.error("😕 User not known or password incorrect")
+    return False
+
+def new_user():
+    """Registers a new user."""
+    def register_form():
+        """Form with widgets to collect user information"""
+        with st.form("Credentials"):
+            st.text_input("Username", key="username")
+            st.text_input("Password", type="password", key="password")
+            st.form_submit_button("Register", on_click=register_user)
+
+    def register_user():
+        """Registers a new user."""
+        if st.session_state["username"] in st.secrets["passwords"]:
+            st.error("😕 Username already taken")
+        else:
+            st.secrets["passwords"][st.session_state["username"]] = st.session_state[
+                "password"
+            ]
+            st.session_state["user_logged_in"] = True
+            del st.session_state["password"]  # Don't store the username or password.
+
+    # Show inputs for username + password.
+    st.title("Register a new user")
+    register_form()
+    if "user_logged_in" in st.session_state:
+        st.success("🎉 User registered successfully")
+        return True
+    return False
+
+if not check_password():
+    st.stop()
+
+st.title(f"Bienvenue sur l'app {st.session_state['username']}!")
+st.write("Page Portefeuille : résume l'état de votre portefeuille")
+st.write("Page Transactions : permet de saisir vos transactions")
+st.write("Page Dashboard : en developpement...")
+
+st.write(st.secrets)
+
+st.write(st.session_state)
+
 
 logging.debug("debut connexion")
 conn = st.connection('s3', type=FilesConnection)
 logging.debug("connexion reussi !")
 df = conn.read("dashboard-invest/portefeuille.csv", input_format="csv", ttl=600)
 
-logging.debug("df recup !")
-logging.debug(df)
 # Print results.
 st.dataframe(df)
 
 
 # setup_database()
-
-with open('./config_auth.yaml') as file:
-    config = yaml.load(file, Loader=SafeLoader)
-
-authenticator = stauth.Authenticate(
-    config['credentials'],
-    config['cookie']['name'],
-    config['cookie']['key'],
-    config['cookie']['expiry_days'],
-    config['preauthorized']
-)
-
-tabs1, tabs2 = st.tabs(["Login", "Register"])
-
-def reset_password():
-    global file, e
-    if st.button('Reset password'):
-        try:
-            if authenticator.reset_password(st.session_state["username"], 'Reset password'):
-                st.success('Password modified successfully')
-                with open('./config_auth.yaml', 'w') as file:
-                    yaml.dump(config, file, default_flow_style=False)
-        except Exception as e:
-            st.error(e)
-
-
-
-
-
-if st.session_state["authentication_status"]:
-    authenticator.logout('Logout', 'sidebar', key='unique_key')
-    st.sidebar.success(f'Connnexion Réussi ! Welcome *{st.session_state["name"]}*')
-elif st.session_state["authentication_status"] is False:
-    with tabs1:
-        authenticator.login('Login', 'main')
-        st.error('Username/password is incorrect')
-        reset_password()
-elif st.session_state["authentication_status"] is None:
-    with tabs1:
-        authenticator.login('Login', 'main')
-        st.warning('Please enter your username and password')
-        reset_password()
-
-
-
-with tabs2:
-    try:
-        if authenticator.register_user('Register user', preauthorization=False):
-            st.success('User registered successfully')
-            with open('./config_auth.yaml', 'w') as file:
-                yaml.dump(config, file, default_flow_style=False)
-    except Exception as e:
-        st.error(e)
-
-
