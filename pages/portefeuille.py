@@ -90,7 +90,7 @@ logging.basicConfig(level=logging.DEBUG)
 conn = st.connection('s3', type=FilesConnection)
 df_total = conn.read("dashboard-invest/portefeuille.csv", input_format="csv", ttl=600)
 
-if not st.session_state["authentication_status"]:
+if not st.session_state["user_logged_in"]:
     st.warning("**Access is restricted. Please go connect !**")
 else:
     try:
