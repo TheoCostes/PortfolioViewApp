@@ -94,7 +94,7 @@ if not st.session_state["authentication_status"]:
     st.warning("**Access is restricted. Please go connect !**")
 else:
     try:
-        df_last = df_total[(df_total['id_user'] == st.session_state["username"]) & (df_total["id_portefeuille"] == max(df_total["id_portefeuille"]))]
+        df_last = df_total[(df_total["id_portefeuille"] == max(df_total["id_portefeuille"]))]
 
         type_actifs = df_last["type_actif"].unique().tolist()
 
