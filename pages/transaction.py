@@ -6,6 +6,7 @@ import pandas as pd
 import logging
 from st_files_connection import FilesConnection
 import s3fs
+import boto3
 
 # TODO : edit une transaction
 
@@ -318,9 +319,25 @@ if not st.session_state["user_logged_in"]:
 else :
     # Exemple de DataFrame
     conn = st.connection('s3', type=FilesConnection)
-    df_transc = conn.read("dashboard-invest/transaction_history.csv", input_format="csv", ttl=600)
+    AWS_ACCESS_KEY_ID = st.secrets["AWS_ACCESS_KEY_ID"]
+    AWS_SECRET_ACCESS_KEY = st.secrets["AWS_SECRET_ACCESS_KEY"]
+    # AWS_SESSION_TOKEN = os.getenv("AWS_SESSION_TOKEN")
+
+    s3_client = boto3.client(
+        "s3",
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    )
+
+    df_transc = pd.read_csv(
+        f"s3://dashboard-invest/transaction_history.csv",
+        sep=";",
+        on_bad_lines = 'skip',
+        storage_options={
+            "key": AWS_ACCESS_KEY_ID,
+            "secret": AWS_SECRET_ACCESS_KEY        },
+    )
     df_transc["date"] = pd.to_datetime(df_transc["date"], format="mixed", dayfirst=True)
-    st.dataframe(df_transc)
     try:
 
         df_transc.sort_values(by="date", ascending=False, inplace=True)

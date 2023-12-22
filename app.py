@@ -7,8 +7,7 @@ from yaml import SafeLoader
 import s3fs
 import streamlit_authenticator as stauth
 import hmac
-
-
+import requests
 
 
 def log_out():
@@ -107,4 +106,22 @@ df = conn.read("dashboard-invest/portefeuille.csv", input_format="csv", ttl=600)
 st.dataframe(df)
 
 
+url = "https://api.connect.debank.com/v1/user/complex_protocol_list"
+access_key_debank = st.secrets["ACCES_KEY_DEBANK"]
+headers = {
+    "Authorization": f"Bearer {access_key_debank}",
+    "Content-Type": "application/json",
+}
+
+address = "0x0e038adF84b1829c393cFd39262070Eef2f2a065"
+
+response = requests.get(url, headers=headers)
+
+if response.status_code == 200:
+    data = response.json()
+    # Traitement des données
+    st.write(data)
+else:
+    print("Erreur de requête:", response.status_code)
+    st.write("Erreur de requête:", response.status_code)
 # setup_database()
