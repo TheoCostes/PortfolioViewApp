@@ -4,7 +4,7 @@ Suivi Portefeuille is a web application for managing and tracking your portfolio
 
 ## Pipelines
 
-![alt text](https://github.com/TheoCostes/PortfolioViewApp/tree/main/image/Pipeline_data.png?raw=true)
+![Data Pipeline](image/Pipeline_data.png?raw=true)
 
 
 ## Features
@@ -25,8 +25,8 @@ Suivi Portefeuille is a web application for managing and tracking your portfolio
 
 ## Les dashboards
 
-![alt text](https://github.com/TheoCostes/PortfolioViewApp/tree/main/image/affichage_portfolio_global.png?raw=true)
-![alt text](https://github.com/TheoCostes/PortfolioViewApp/tree/main/image/affichage_portfolio_detail.png?raw=true)
+# ![Image representant l'affichage global du portfolio](image/affichage_portfolio_global.png)
+# ![Image representant l'affichage détaillé du portfolio pour un type d'actif](image/affichage_portfolio_detail.png)
 
 
 ## Installation
