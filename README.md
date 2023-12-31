@@ -2,6 +2,11 @@
 
 Suivi Portefeuille is a web application for managing and tracking your portfolio. It is built with Python, JavaScript, and uses the Streamlit framework for the frontend.
 
+## Pipelines
+
+![alt text](https://github.com/TheoCostes/PortfolioViewApp/tree/main/image/Pipeline_data.png?raw=true)
+
+
 ## Features
 
 - User authentication: Register (only available for me) and log in to access the dashboard.
@@ -18,11 +23,17 @@ Suivi Portefeuille is a web application for managing and tracking your portfolio
 - create a dashboard to visualize the performance of your portfolio
 - create a dashboard to rank assets by performance
 
+## Les dashboards
+
+![alt text](https://github.com/TheoCostes/PortfolioViewApp/tree/main/image/affichage_portfolio_global.png?raw=true)
+![alt text](https://github.com/TheoCostes/PortfolioViewApp/tree/main/image/affichage_portfolio_detail.png?raw=true)
+
+
 ## Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/TheoCostes/suivi_portefeuille.git
+git clone https://github.com/TheoCostes/PortfolioViewApp.git
 ```
 
 2. Install the required packages:
@@ -41,3 +52,4 @@ After running the application, navigate to the provided local URL in your web br
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
