@@ -92,10 +92,7 @@ st.write("Page Portefeuille : résume l'état de votre portefeuille")
 st.write("Page Transactions : permet de saisir vos transactions")
 st.write("Page Dashboard : en developpement...")
 
-st.write(st.secrets)
-
 st.write(st.session_state)
-
 
 logging.debug("debut connexion")
 conn = st.connection('s3', type=FilesConnection)
@@ -122,6 +119,5 @@ if response.status_code == 200:
     # Traitement des données
     st.write(data)
 else:
-    print("Erreur de requête:", response.status_code)
     st.write("Erreur de requête:", response.status_code)
 # setup_database()
