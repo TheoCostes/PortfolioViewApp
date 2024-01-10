@@ -318,7 +318,7 @@ if not st.session_state["user_logged_in"]:
     st.warning("**Access is restricted. Please go connect !**")
 else :
     # Exemple de DataFrame
-    conn = st.connection('s3', type=FilesConnection)
+    #conn = st.connection('s3', type=FilesConnection)
     AWS_ACCESS_KEY_ID = st.secrets["AWS_ACCESS_KEY_ID"]
     AWS_SECRET_ACCESS_KEY = st.secrets["AWS_SECRET_ACCESS_KEY"]
     # AWS_SESSION_TOKEN = os.getenv("AWS_SESSION_TOKEN")
