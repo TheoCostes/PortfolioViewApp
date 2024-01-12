@@ -5,6 +5,7 @@ suivi_portfolio/suivi_portfolio/.env
 suivi_portfolio/portefeuille/__pycache__/
 suivi_portfolio/authentication/__pycache__/
 .streamlit/secrets.toml
+code_api_aws/.streamlit/secrets.toml
 
 *.sqlite3
 config.py
