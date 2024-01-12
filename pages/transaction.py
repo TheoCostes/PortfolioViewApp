@@ -335,7 +335,7 @@ else :
         on_bad_lines = 'skip',
         storage_options={
             "key": AWS_ACCESS_KEY_ID,
-            "secret": AWS_SECRET_ACCESS_KEY        },
+            "secret": AWS_SECRET_ACCESS_KEY},
     )
     df_transc["date"] = pd.to_datetime(df_transc["date"], format="mixed", dayfirst=True)
     try:
