@@ -99,16 +99,17 @@ def get_quote_bourse(dataframe):
     return QUOTE
 
 
-def update_prices():
+def update_prices(dataframe):
     """Update the prices of the Portefeuille in db"""
-    df_total = connect_to_database("./data/db.sqlite3", 'portefeuille_portefeuille' )
-    df_last = df_total[df_total["id_portefeuille"] == max(df_total["id_portefeuille"])]
+    print('='*50)
+    print("IN UPGRADE")
+    print(dataframe)
+    print('='*50)
+    df_last = dataframe[dataframe["id_portefeuille"] == max(dataframe["id_portefeuille"])]
     df_last = get_prices(df_last)
 
     df_last["id_portefeuille"] = df_last["id_portefeuille"].apply(lambda x: x + 1)
     df_last["last_update"] = pd.to_datetime(df_last["last_update"], format="mixed")
     df_last["id"] = df_last["id"].apply(lambda x: x + len(df_last) + 1)
 
-    conn = sqlite3.connect("../data/db.sqlite3")
-    df_last.to_sql("portefeuille_portefeuille", con=conn, index=False, if_exists="append")
-    conn.close()
+    return df_last
