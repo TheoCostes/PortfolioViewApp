@@ -8,8 +8,8 @@ import streamlit as st
 import pandas as pd
 import sqlite3
 
-API_COINMARKET = st.secrets["API_COINMARKET"]
-API_VANTAGE = st.secrets["API_VANTAGE"]
+API_COINMARKET = os.environ["API_COINMARKET"]
+API_VANTAGE = os.environ["API_VANTAGE"]
 
 
 def connect_to_database(db, table):
