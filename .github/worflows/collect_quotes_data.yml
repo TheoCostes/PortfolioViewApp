@@ -1,3 +1,10 @@
+name: Collect Quotes Data
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'
+
+jobs:
   build:
     runs-on: ubuntu-latest
 
