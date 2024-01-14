@@ -1,0 +1,54 @@
+name: Collect Quotes Data
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Log
+      run: |
+        echo "Start" >> $GITHUB_STEP_SUMMARY
+    
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Log1
+      run: |
+        echo "after check out" >> $GITHUB_STEP_SUMMARY
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.9
+
+    - name: Log2
+      run: |
+        echo "after check out" >> $GITHUB_STEP_SUMMARY
+
+    - name: Install dependencies
+      run: |
+        echo "start install dependencies" >> $GITHUB_STEP_SUMMARY
+        python -m pip install --upgrade pip
+        echo "start requirements ..." >> $GITHUB_STEP_SUMMARY
+        pip install -r requirements.txt
+        echo "finiish requirements ..." >> $GITHUB_STEP_SUMMARY
+
+    - name: Generate list using Markdown
+      run: |
+        echo "This is the lead in sentence for the list" >> $GITHUB_STEP_SUMMARY
+
+    - name: Execute Python script
+      env:
+        API_COINMARKET: ${ { secrets.API_COINMARKET } }
+        API_ALPHA_VANTAGE: ${ { secrets.API_ALPHA_VANTAGE } }
+        AWS_ACCESS_KEY_ID: ${ { secrets.AWS_ACCESS_KEY_ID } }
+        AWS_SECRET_ACCESS_KEY: ${ { secrets.AWS_SECRET_ACCESS_KEY } }
+        AWS_DEFAULT_REGION: ${ { secrets.AWS_DEFAULT_REGION } }
+      run: | 
+        python code_api_aws/collect_data.py
+
+
