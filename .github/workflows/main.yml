@@ -35,6 +35,7 @@ jobs:
         python -m pip install --upgrade pip
         echo "start requirements ..." >> $GITHUB_STEP_SUMMARY
         pip install -r requirements.txt
+        echo "finiish requirements ..." >> $GITHUB_STEP_SUMMARY
 
     - name: Generate list using Markdown
       run: |
