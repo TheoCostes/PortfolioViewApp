@@ -2,7 +2,7 @@ name: Collect Quotes Data
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/2 * * * *'
 
 jobs:
   build:
@@ -21,6 +21,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
+    - name: Generate list using Markdown
+      run: |
+        echo "This is the lead in sentence for the list" >> $GITHUB_STEP_SUMMARY
 
     - name: Execute Python script
       env:
