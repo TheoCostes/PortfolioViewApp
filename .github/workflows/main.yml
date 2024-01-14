@@ -31,7 +31,9 @@ jobs:
 
     - name: Install dependencies
       run: |
+        echo "start install dependencies" >> $GITHUB_STEP_SUMMARY
         python -m pip install --upgrade pip
+        echo "start requirements ..." >> $GITHUB_STEP_SUMMARY
         pip install -r requirements.txt
 
     - name: Generate list using Markdown
