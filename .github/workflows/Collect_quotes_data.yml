@@ -2,7 +2,7 @@ name: Collect Quotes Data
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/ * * * *'
 
   workflow_dispatch:
     inputs:
@@ -20,26 +20,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    steps:
-    - name: Log
-      run: |
-        echo "Start" >> $GITHUB_STEP_SUMMARY
-    
+    steps:    
     - name: Checkout
       uses: actions/checkout@v3
-
-    - name: Log1
-      run: |
-        echo "after check out" >> $GITHUB_STEP_SUMMARY
 
     - name: Set up Python 3.9
       uses: actions/setup-python@v3
       with:
         python-version: 3.9
-
-    - name: Log2
-      run: |
-        echo "after check out" >> $GITHUB_STEP_SUMMARY
 
     - name: Install dependencies
       run: |
@@ -54,20 +42,9 @@ jobs:
         echo "start requests ..." >> $GITHUB_STEP_SUMMARY
         echo "finiish requirements ..." >> $GITHUB_STEP_SUMMARY
 
-
     - name: Generate list using Markdown
       run: |
         echo "This is the lead in sentence for the list" >> $GITHUB_STEP_SUMMARY
-
-    - name: Print Environment Variables
-      env:
-        API_COINMARKET: ${{secrets.API_COINMARKET}}
-        API_VANTAGE: ${{secrets.API_ALPHA_VANTAGE}}
-        AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-        AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-      run: |
-        echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> $GITHUB_STEP_SUMMARY
-        echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> $GITHUB_STEP_SUMMARY
 
     - name: Execute Python script
       env:
