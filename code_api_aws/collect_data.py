@@ -10,8 +10,8 @@ os.chdir("..")
 s3_bucket = "dashboard-invest"
 s3_key = "portefeuille.csv"
 
-AWS_ACCESS_KEY_ID = secrets.get_secret("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = secrets.get_secret("AWS_SECRET_ACCESS_KEY")
+AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
+AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
 
 print(AWS_ACCESS_KEY_ID)
 print(AWS_SECRET_ACCESS_KEY)
