@@ -9,8 +9,8 @@ import sqlite3
 import secrets
 
 
-API_COINMARKET = os.environ["API_COINMARKET"]
-API_VANTAGE = os.environ["API_VANTAGE"]
+API_COINMARKET = os.environ.get("API_COINMARKET")
+API_VANTAGE = os.environ.get("API_VANTAGE")
 
 
 def connect_to_database(db, table):
