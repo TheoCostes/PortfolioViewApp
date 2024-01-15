@@ -53,17 +53,28 @@ jobs:
         pip install Requests
         echo "start requests ..." >> $GITHUB_STEP_SUMMARY
         echo "finiish requirements ..." >> $GITHUB_STEP_SUMMARY
-      env:
-        API_COINMARKET: ${{secrets.API_COINMARKET}}
-        API_VANTAGE: ${{secrets.API_ALPHA_VANTAGE}}
-        AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-        AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+
 
     - name: Generate list using Markdown
       run: |
         echo "This is the lead in sentence for the list" >> $GITHUB_STEP_SUMMARY
 
+    - name: Print Environment Variables
+      env:
+        API_COINMARKET: ${{secrets.API_COINMARKET}}
+        API_VANTAGE: ${{secrets.API_ALPHA_VANTAGE}}
+        AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+        AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+      run: |
+        echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> $GITHUB_STEP_SUMMARY
+        echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> $GITHUB_STEP_SUMMARY
+
     - name: Execute Python script
+      env:
+        API_COINMARKET: ${{secrets.API_COINMARKET}}
+        API_VANTAGE: ${{secrets.API_ALPHA_VANTAGE}}
+        AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+        AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
       run: | 
         python code_api_aws/collect_data.py
 
