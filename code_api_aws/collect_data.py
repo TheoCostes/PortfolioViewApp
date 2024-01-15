@@ -21,9 +21,11 @@ s3 = boto3.client(
 print(s3_bucket, s3_key)
 try:
     response = s3.get_object(Bucket=s3_bucket, Key=s3_key)
+    print(response)
     existing_data = pd.read_csv(response['Body'])
 except Exception as e:
     # If the file doesn't exist, you might want to handle this case based on your requirements
+    print("ERROR :", e)
     existing_data = pd.DataFrame()
 
 api_data_result = update_prices(existing_data)
