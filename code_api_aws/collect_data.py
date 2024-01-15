@@ -2,7 +2,6 @@ import pandas as pd
 import boto3
 from io import StringIO
 from utils_api import update_prices
-import streamlit as st
 import os
 
 os.chdir("..")
