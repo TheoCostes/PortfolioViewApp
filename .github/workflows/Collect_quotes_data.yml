@@ -2,7 +2,7 @@ name: Collect Quotes Data
 
 on:
   schedule:
-    - cron: '*/ * * * *'
+    - cron: '0 */4 * * *'
 
   workflow_dispatch:
     inputs:
@@ -41,10 +41,6 @@ jobs:
         pip install Requests
         echo "start requests ..." >> $GITHUB_STEP_SUMMARY
         echo "finiish requirements ..." >> $GITHUB_STEP_SUMMARY
-
-    - name: Generate list using Markdown
-      run: |
-        echo "This is the lead in sentence for the list" >> $GITHUB_STEP_SUMMARY
 
     - name: Execute Python script
       env:
