@@ -6,9 +6,11 @@ from datetime import datetime
 import logging
 import pandas as pd
 import sqlite3
+import secrets
 
-API_COINMARKET = os.environ["API_COINMARKET"]
-API_VANTAGE = os.environ["API_VANTAGE"]
+
+API_COINMARKET = secrets.get_secret("API_COINMARKET")
+API_VANTAGE = secrets.get_secret("API_VANTAGE")
 
 
 def connect_to_database(db, table):
