@@ -2,7 +2,7 @@ name: Collect Quotes Data
 
 on:
   schedule:
-    - cron: '0 */4 * * *'
+    - cron: '*/5 * * * *'
 
 jobs:
   build:
@@ -34,7 +34,12 @@ jobs:
         echo "start install dependencies" >> $GITHUB_STEP_SUMMARY
         python -m pip install --upgrade pip
         echo "start requirements ..." >> $GITHUB_STEP_SUMMARY
-        pip install -r requirements.txt
+        pip install boto3==1.34.6
+        echo "start boto ..." >> $GITHUB_STEP_SUMMARY
+        pip install pandas==2.1.4
+        echo "start pandas ..." >> $GITHUB_STEP_SUMMARY
+        pip install Requests==2.31.0
+        echo "start requests ..." >> $GITHUB_STEP_SUMMARY
         echo "finiish requirements ..." >> $GITHUB_STEP_SUMMARY
 
     - name: Generate list using Markdown

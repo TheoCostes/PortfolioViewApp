@@ -4,7 +4,6 @@ from requests import Session, get
 import json
 from datetime import datetime
 import logging
-import streamlit as st
 import pandas as pd
 import sqlite3
 
