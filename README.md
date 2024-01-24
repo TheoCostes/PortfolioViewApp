@@ -1,4 +1,4 @@
-# Suivi Portefeuille
+# Portfolio View App
 
 Suivi Portefeuille is a web application for managing and tracking your portfolio. It is built with Python, JavaScript, and uses the Streamlit framework for the frontend.
 
